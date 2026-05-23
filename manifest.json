@@ -1,80 +1,22 @@
 {
-  "name": "Filist — Kişisel Ajanda",
+  "name": "Filist — Ajanda",
   "short_name": "Filist",
-  "description": "Takvimli kişisel ajanda ve günlük kayıt uygulaması",
+  "description": "Kişisel takvim ve ajanda",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0a0a0a",
-  "theme_color": "#0d0d0d",
+  "theme_color": "#0a0a0a",
   "lang": "tr",
-  "categories": ["productivity", "utilities"],
   "icons": [
-    {
-      "src": "icons/icon-72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-128.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon-384.png",
-      "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "icons/screenshot.png",
-      "sizes": "540x720",
-      "type": "image/png",
-      "form_factor": "narrow"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Yeni Kayıt",
-      "short_name": "Kayıt Ekle",
-      "description": "Hızlıca yeni ajanda kaydı ekle",
-      "url": "./index.html?action=new",
-      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
-    }
+    {"src":"icons/icon-72.png","sizes":"72x72","type":"image/png"},
+    {"src":"icons/icon-96.png","sizes":"96x96","type":"image/png"},
+    {"src":"icons/icon-128.png","sizes":"128x128","type":"image/png"},
+    {"src":"icons/icon-144.png","sizes":"144x144","type":"image/png"},
+    {"src":"icons/icon-152.png","sizes":"152x152","type":"image/png"},
+    {"src":"icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"icons/icon-384.png","sizes":"384x384","type":"image/png"},
+    {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
   ]
 }
