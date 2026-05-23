@@ -1,37 +1,28 @@
-// Filist SW v3 — Network-first, auth-safe & robust fallback
-const CACHE = 'filist-v3';
-const SHELL = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icons/icon-192.png'
-];
+// Filist SW v2 — Network-first, auth-safe
+const CACHE = 'filist-v2';
+const SHELL = ['./index.html','./manifest.json','./icons/icon-192.png'];
 
-// Service Worker Kurulumu
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE)
-      .then(c => c.addAll(SHELL).catch(err => console.warn('Cache ekleme hatası:', err)))
+      .then(c => c.addAll(SHELL).catch(()=>{}))
       .then(() => self.skipWaiting())
   );
 });
 
-// Eski Cache Temizliği
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(
-        keys.filter(k => k !== CACHE).map(k => caches.delete(k))
-      ))
+      .then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
 
-// İstek Yönetimi (Fetch)
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
-  // Firebase Auth ve harici API'leri asla engelleme
+  // Firebase Auth ve Google servislerini asla yakalama
+  // Listeyi genişlettik
   const skip = [
     'firebaseapp.com', 
     'googleapis.com', 
@@ -39,38 +30,44 @@ self.addEventListener('fetch', e => {
     'accounts.google.com', 
     'imgbb.com', 
     'fonts.googleapis.com',
-    'fonts.gstatic.com'
+    'fonts.gstatic.com',
+    'firestore.googleapis.com',
+    'identitytoolkit.googleapis.com'
   ];
-  
-  if (e.request.method !== 'GET') return;
-  if (skip.some(s => url.hostname.includes(s))) return;
 
-  // Sayfa Navigasyonu (HTML) — Önce Ağ, Hata Durumunda Cache
-  if (e.request.mode === 'navigate') {
+  // POST isteklerini (giriş, kayıt vb.) yakalama
+  if(e.request.method !== 'GET') return;
+  
+  // Skip listesindeki domainleri kontrol et
+  if(skip.some(s => url.hostname.includes(s))) return;
+
+  // Navigation (HTML) — Network first, cache fallback
+  if(e.request.mode === 'navigate') {
     e.respondWith(
       fetch(e.request)
-        .then(r => {
-          if (r.ok) {
-            const clone = r.clone();
-            caches.open(CACHE).then(c => c.put(e.request, clone));
-          }
-          return r;
+        .then(r => { 
+          if(r.ok){
+            caches.open(CACHE).then(c=>c.put(e.request,r.clone()));
+          } 
+          return r; 
         })
-        .catch(() => caches.match('./index.html') || caches.match('./'))
+        .catch(() => caches.match('./index.html'))
     );
     return;
   }
 
-  // Diğer Statik Varlıklar (CSS, JS, Resimler) — Önce Ağ, Hata Durumunda Cache
+  // Statik varlıklar — Cache first, network fallback
   e.respondWith(
-    fetch(e.request)
-      .then(r => {
-        if (r.ok) {
-          const clone = r.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
-        }
+    caches.match(e.request).then(cached => {
+      const net = fetch(e.request).then(r => {
+        if(r.ok) caches.open(CACHE).then(c=>c.put(e.request,r.clone()));
         return r;
-      })
-      .catch(() => caches.match(e.request))
+      });
+      return cached || net;
+    })
   );
+});
+
+self.addEventListener('message', e => {
+  if(e.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
