@@ -1,115 +1,56 @@
-// Filist PWA Service Worker
-// Network-first strategy: fresh content on every load, fallback to cache when offline
+// Filist SW v2 — Network-first, auth-safe
+const CACHE = 'filist-v2';
+const SHELL = ['./index.html','./manifest.json','./icons/icon-192.png'];
 
-const CACHE_NAME = 'filist-v1.2';
-const OFFLINE_URL = './index.html';
-
-const PRECACHE_ASSETS = [
-  './index.html',
-  './manifest.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap'
-];
-
-// ─── INSTALL ─────────────────────────────────────────────
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(PRECACHE_ASSETS).catch(err => {
-        console.log('[SW] Precache partial failure:', err);
-      });
-    }).then(() => self.skipWaiting())
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE)
+      .then(c => c.addAll(SHELL).catch(()=>{}))
+      .then(() => self.skipWaiting())
   );
 });
 
-// ─── ACTIVATE ────────────────────────────────────────────
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys => {
-      return Promise.all(
-        keys.filter(key => key !== CACHE_NAME)
-            .map(key => {
-              console.log('[SW] Deleting old cache:', key);
-              return caches.delete(key);
-            })
-      );
-    }).then(() => self.clients.claim())
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))
+      .then(() => self.clients.claim())
   );
 });
 
-// ─── FETCH ───────────────────────────────────────────────
-// Network-first: always try network, fall back to cache
-// This ensures that after Chrome cache is cleared, the app
-// always fetches fresh content from the server.
-self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
+self.addEventListener('fetch', e => {
+  const url = new URL(e.request.url);
 
-  // Skip non-GET and Firebase/external API calls
-  if (event.request.method !== 'GET') return;
-  if (url.hostname.includes('firestore.googleapis.com')) return;
-  if (url.hostname.includes('firebase.googleapis.com')) return;
-  if (url.hostname.includes('firebasestorage.googleapis.com')) return;
-  if (url.hostname.includes('identitytoolkit.googleapis.com')) return;
-  if (url.hostname.includes('securetoken.googleapis.com')) return;
+  // Never intercept these — Firebase Auth needs them untouched
+  const skip = [
+    'firebaseapp.com', 'googleapis.com', 'gstatic.com',
+    'accounts.google.com', 'imgbb.com', 'fonts.googleapis.com'
+  ];
+  if(e.request.method !== 'GET') return;
+  if(skip.some(s => url.hostname.includes(s))) return;
 
-  // For navigation requests (HTML pages) — network first, cache fallback
-  if (event.request.mode === 'navigate') {
-    event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          // Cache the fresh response
-          if (response.ok) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-          }
-          return response;
-        })
-        .catch(() => {
-          // Offline fallback
-          return caches.match(OFFLINE_URL);
-        })
+  // Navigation (HTML) — network first, cache fallback
+  if(e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request)
+        .then(r => { if(r.ok){caches.open(CACHE).then(c=>c.put(e.request,r.clone()))} return r; })
+        .catch(() => caches.match('./index.html'))
     );
     return;
   }
 
-  // For other assets: network first, cache fallback
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        if (response.ok && url.protocol !== 'chrome-extension:') {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        }
-        return response;
-      })
-      .catch(() => {
-        return caches.match(event.request).then(cached => {
-          if (cached) return cached;
-          // For images, return a placeholder
-          if (event.request.destination === 'image') {
-            return new Response(
-              '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="#1a1a1a" width="100" height="100"/></svg>',
-              { headers: { 'Content-Type': 'image/svg+xml' } }
-            );
-          }
-          return new Response('Çevrimdışı — bağlantı yok', {
-            status: 503,
-            headers: { 'Content-Type': 'text/plain; charset=utf-8' }
-          });
-        });
-      })
+  // Static assets — cache first, network fallback
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      const net = fetch(e.request).then(r => {
+        if(r.ok) caches.open(CACHE).then(c=>c.put(e.request,r.clone()));
+        return r;
+      });
+      return cached || net;
+    })
   );
 });
 
-// ─── MESSAGE: Force update ────────────────────────────────
-self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
-  if (event.data && event.data.type === 'CLEAR_CACHE') {
-    caches.delete(CACHE_NAME).then(() => {
-      event.source.postMessage({ type: 'CACHE_CLEARED' });
-    });
-  }
+self.addEventListener('message', e => {
+  if(e.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
