@@ -231,16 +231,14 @@ header{height:var(--hdr);display:flex;align-items:center;padding:0 14px;border-b
   <div class="setup-logo">FİLİST</div>
   <div class="setup-sub">Kişisel Ajanda</div>
   <div class="setup-card">
-    <div class="setup-label">Kişisel Kodunuz</div>
-    <div class="setup-code" id="new-code">----</div>
-    <div class="setup-hint">Bu kodu bir yere not edin. Telefon temizlense bile bu kod ile tüm kayıtlarınıza erişebilirsiniz.</div>
+    <div class="setup-label">Kişisel Kodunuzu Belirleyin</div>
+    <div class="setup-hint">Hatırlayabileceğiniz bir şey yazın.<br>İsim, doğum tarihi, kelime — ne olursa.<br><br>Telefon temizlense bile bu kod ile tüm kayıtlarınıza erişirsiniz.</div>
   </div>
-  <div class="setup-or">─── veya ───</div>
-  <input class="setup-inp" id="setup-inp" type="text" placeholder="ESKİ KODUNUZU GİRİN" maxlength="8">
+  <input class="setup-inp" id="setup-inp" type="text" placeholder="KODUNUZU YAZIN" maxlength="20" autocomplete="off" autocorrect="off" spellcheck="false">
   <div class="setup-btns">
-    <button class="setup-btn" id="setup-new">Yeni Kod ile Başla</button>
-    <button class="setup-btn2" id="setup-restore">Eski Kodu Kullan</button>
+    <button class="setup-btn" id="setup-new">Devam Et</button>
   </div>
+</div>
 </div>
 
 <!-- MAIN APP -->
@@ -406,25 +404,25 @@ function eRef(code){return db.collection('spaces').doc(code||getCode()).collecti
 // ── SETUP SCREEN ───────────────────────────────────────
 const existingCode=getCode();
 if(!existingCode){
-  // Show setup screen
-  const nc=genCode();
-  document.getElementById('new-code').textContent=nc;
   document.getElementById('setup').classList.add('show');
   document.getElementById('LS').classList.add('hide');
   setTimeout(()=>document.getElementById('LS').style.display='none',500);
 
   document.getElementById('setup-new').onclick=()=>{
-    setCode(nc);
-    document.getElementById('setup').classList.remove('show');
-    initApp();
-  };
-  document.getElementById('setup-restore').onclick=()=>{
     const inp=document.getElementById('setup-inp').value.trim().toUpperCase();
-    if(inp.length<4){alert('Geçerli bir kod girin');return;}
+    if(inp.length<2){
+      document.getElementById('setup-inp').style.borderColor='var(--red)';
+      document.getElementById('setup-inp').placeholder='EN AZ 2 KARAKTER GİRİN';
+      return;
+    }
     setCode(inp);
     document.getElementById('setup').classList.remove('show');
     initApp();
   };
+  // Allow Enter key
+  document.getElementById('setup-inp').addEventListener('keydown',e=>{
+    if(e.key==='Enter') document.getElementById('setup-new').click();
+  });
 } else {
   initApp();
 }
