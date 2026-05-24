@@ -10,43 +10,53 @@
 <meta name="apple-mobile-web-app-title" content="Filist">
 <link rel="manifest" href="/Filist-/manifest.json">
 <link rel="apple-touch-icon" href="/Filist-/icons/icon-192.png">
-<link rel="apple-touch-icon" sizes="152x152" href="/Filist-/icons/icon-152.png">
 <link rel="icon" type="image/png" href="/Filist-/icons/icon-96.png">
 <title>Filist</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0a0a0a; --bg2:#111; --bg3:#1c1c1c; --b:#252525;
-  --gold:#c9a84c; --gdim:rgba(201,168,76,.14);
-  --tx:#e8e0d0; --t2:#907e6a; --t3:#4a4540;
-  --red:#c0392b; --amb:#d4821a; --grn:#27ae60;
-  --rdim:rgba(192,57,43,.18); --adim:rgba(212,130,26,.18); --grdim:rgba(39,174,96,.18);
-  --nav:56px; --hdr:54px;
+  --bg:#0a0a0a;--bg2:#111;--bg3:#1c1c1c;--b:#252525;
+  --gold:#c9a84c;--gdim:rgba(201,168,76,.13);
+  --tx:#e8e0d0;--t2:#907e6a;--t3:#4a4540;
+  --red:#c0392b;--amb:#d4821a;--grn:#27ae60;
+  --rdim:rgba(192,57,43,.18);--adim:rgba(212,130,26,.18);--grdim:rgba(39,174,96,.18);
+  --nav:54px;--hdr:52px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-family:'DM Mono',monospace}
 input,textarea,button,select{font-family:'DM Mono',monospace}
-::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
+::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:var(--b)}
 
-/* LOADING */
-#LS{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;
-    align-items:center;justify-content:center;z-index:9999;transition:opacity .4s}
+/* ── LOADING ── */
+#LS{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .4s}
 #LS.hide{opacity:0;pointer-events:none}
-.ll{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;
-    color:var(--gold);letter-spacing:8px;animation:pu 1.8s ease-in-out infinite}
+.ll{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:var(--gold);letter-spacing:8px;animation:pu 1.8s ease-in-out infinite}
 @keyframes pu{0%,100%{opacity:.2}50%{opacity:1}}
 .ls{font-size:9px;letter-spacing:3px;color:var(--t3);margin-top:10px;text-transform:uppercase}
 
-/* APP SHELL */
+/* ── CODE SETUP SCREEN ── */
+#setup{position:fixed;inset:0;background:var(--bg);z-index:8000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px}
+#setup.show{display:flex}
+.setup-logo{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;color:var(--gold);letter-spacing:6px;margin-bottom:6px}
+.setup-sub{font-size:9px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:40px}
+.setup-card{background:var(--bg2);border:1px solid var(--b);border-radius:14px;padding:20px;width:100%;max-width:340px;margin-bottom:16px}
+.setup-label{font-size:9px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:10px}
+.setup-code{font-size:22px;letter-spacing:4px;color:var(--gold);font-weight:500;margin-bottom:10px;word-break:break-all}
+.setup-hint{font-size:10px;color:var(--t2);line-height:1.7}
+.setup-or{font-size:9px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin:14px 0;text-align:center}
+.setup-inp{width:100%;background:var(--bg3);border:1px solid var(--b);border-radius:8px;padding:11px 13px;color:var(--tx);font-size:14px;letter-spacing:2px;outline:none;-webkit-appearance:none;text-transform:uppercase;max-width:340px}
+.setup-inp:focus{border-color:var(--gold)}
+.setup-btns{display:flex;flex-direction:column;gap:9px;width:100%;max-width:340px;margin-top:16px}
+.setup-btn{background:var(--gold);color:#0a0a0a;border:none;border-radius:9px;padding:14px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500}
+.setup-btn2{background:0;border:1px solid var(--b);color:var(--t2);border-radius:9px;padding:12px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer}
+
+/* ── APP ── */
 #app{display:flex;flex-direction:column;height:100vh;padding-bottom:var(--nav)}
 
-/* HEADER */
-header{
-  height:var(--hdr);display:flex;align-items:center;
-  padding:0 14px;border-bottom:1px solid var(--b);flex-shrink:0;
-}
-.logo{font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:4px;color:var(--gold);font-weight:300}
+/* ── HEADER ── */
+header{height:var(--hdr);display:flex;align-items:center;padding:0 14px;border-bottom:1px solid var(--b);flex-shrink:0;gap:8px}
+.logo{font-family:'Cormorant Garamond',serif;font-size:19px;letter-spacing:4px;color:var(--gold);font-weight:300;cursor:pointer}
 .hclk{flex:1;text-align:center}
 #clk{font-size:17px;letter-spacing:2px;line-height:1.2}
 #cld{font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase}
@@ -55,47 +65,37 @@ header{
 .sdot.err{background:var(--red)}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
 
-/* BOTTOM NAV */
-#nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav);
-     background:var(--bg2);border-top:1px solid var(--b);
-     display:flex;align-items:stretch;z-index:200}
-.nb2{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-     gap:3px;cursor:pointer;color:var(--t3);border:none;background:0;transition:color .15s;padding:4px 0}
+/* ── BOTTOM NAV ── */
+#nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav);background:var(--bg2);border-top:1px solid var(--b);display:flex;align-items:stretch;z-index:200}
+.nb2{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--t3);border:none;background:0;transition:color .15s;padding:4px 0}
 .nb2.on{color:var(--gold)}
-.nb2 svg{width:19px;height:19px;stroke-width:1.5}
+.nb2 svg{width:18px;height:18px;stroke-width:1.5}
 .nb2 span{font-size:8px;letter-spacing:1px;text-transform:uppercase}
 
-/* VIEWS */
+/* ── VIEWS ── */
 .view{display:none;flex-direction:column;flex:1;overflow:hidden;min-height:0}
 .view.on{display:flex}
 
-/* ══ CALENDAR VIEW ══════════════════════════════════ */
-#v-cal{display:none;flex-direction:column;flex:1;min-height:0}
-#v-cal.on{display:flex}
-
-/* Today strip — compact */
-.tstrip{
-  display:flex;align-items:center;gap:12px;
-  padding:6px 14px;border-bottom:1px solid var(--b);flex-shrink:0;
-}
-.tnum{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;line-height:1;color:var(--gold)}
-.tday{font-family:'Cormorant Garamond',serif;font-size:15px;font-style:italic;line-height:1.2}
+/* ══ CALENDAR ══ */
+/* Today strip */
+.tstrip{display:flex;align-items:center;gap:12px;padding:6px 14px 5px;border-bottom:1px solid var(--b);flex-shrink:0}
+.tnum{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;line-height:1;color:var(--gold)}
+.tday{font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;line-height:1.2}
 .tmyr{font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-top:2px}
 
 /* Month nav */
 .mnav{display:flex;align-items:center;justify-content:space-between;padding:4px 12px;flex-shrink:0}
-.mtitle{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;letter-spacing:2px}
+.mtitle{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;letter-spacing:2px}
 .myr{color:var(--gold)}
-.mbn{width:26px;height:26px;border-radius:50%;border:1px solid var(--b);background:0;
-     color:var(--t2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.mbn{width:26px;height:26px;border-radius:50%;border:1px solid var(--b);background:0;color:var(--t2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
 .mbn:active{border-color:var(--gold);color:var(--gold)}
 
-/* Calendar grid — compact fixed-height cells */
+/* Grid */
 .cwds{display:grid;grid-template-columns:repeat(7,1fr);padding:0 6px;flex-shrink:0}
-.cwd{text-align:center;font-size:8px;letter-spacing:1px;color:var(--t3);text-transform:uppercase;padding:2px 0}
-.cgrid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:1fr;padding:2px 6px;flex:1;min-height:0;gap:1px}
-.cell{display:flex;flex-direction:column;align-items:center;justify-content:center;
-      border-radius:6px;cursor:pointer;gap:2px;padding:2px}
+.cwd{text-align:center;font-size:8px;letter-spacing:1px;color:var(--t3);text-transform:uppercase;padding:1px 0}
+/* Fixed 6-row calendar */
+.cgrid{display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(6,1fr);padding:2px 6px;flex-shrink:0;height:192px}
+.cell{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;gap:1px}
 .cell:active{background:var(--bg3)}
 .cell.today{background:var(--gdim)}.cell.today .dn{color:var(--gold)}
 .cell.sel{background:var(--gold)}.cell.sel .dn{color:#0a0a0a;font-weight:600}
@@ -106,53 +106,41 @@ header{
 .cdot.high{background:var(--red)}.cdot.medium{background:var(--amb)}.cdot.low{background:var(--grn)}
 .cell.sel .cdot{opacity:.5}
 
-/* Day panel */
-#dp{background:var(--bg2);border-top:1px solid var(--b);flex-shrink:0;
-    transition:height .3s cubic-bezier(.4,0,.2,1);overflow:hidden;display:flex;flex-direction:column}
-#dp.col{height:46px}#dp.exp{height:46vh}
-.dphead{display:flex;align-items:center;justify-content:space-between;
-        padding:8px 14px;cursor:pointer;flex-shrink:0}
+/* Day panel — always visible, scrollable */
+#dp{flex:1;display:flex;flex-direction:column;overflow:hidden;border-top:1px solid var(--b)}
+.dphead{display:flex;align-items:center;justify-content:space-between;padding:8px 14px 6px;flex-shrink:0}
 .dptitle{font-family:'Cormorant Garamond',serif;font-size:14px;letter-spacing:1px}
 .dpcnt{font-size:8px;color:var(--gold);background:var(--gdim);padding:2px 8px;border-radius:20px;letter-spacing:2px}
-.dparr{color:var(--t3);font-size:12px;transition:transform .3s;margin-left:6px}
-#dp.exp .dparr{transform:rotate(180deg)}
 #elist{flex:1;overflow-y:auto;padding:0 10px 10px}
 
-/* ══ ENTRY CARDS ═══════════════════════════════════ */
-.ecard{background:var(--bg3);border:1px solid var(--b);border-radius:9px;
-       padding:9px 11px 9px 14px;margin-bottom:7px;cursor:pointer;
-       display:flex;gap:9px;align-items:flex-start;position:relative;overflow:hidden}
+/* ══ ENTRY CARDS ══ */
+.ecard{background:var(--bg3);border:1px solid var(--b);border-radius:9px;padding:9px 11px 9px 14px;margin-bottom:7px;cursor:pointer;display:flex;gap:9px;align-items:flex-start;position:relative;overflow:hidden}
 .ecard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
 .ecard.high::before{background:var(--red)}.ecard.medium::before{background:var(--amb)}.ecard.low::before{background:var(--grn)}
 .ecard:active{opacity:.75}
 .ethumb{width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--b)}
 .ebody{flex:1;min-width:0}
-.etitle{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;
-        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
-.enote{font-size:10px;color:var(--t2);line-height:1.5;display:-webkit-box;
-       -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.etitle{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.enote{font-size:10px;color:var(--t2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .emeta{display:flex;align-items:center;gap:6px;margin-top:3px;flex-wrap:wrap}
 .etime{font-size:9px;color:var(--t3);letter-spacing:1px}
-.edlbl{font-size:9px;color:var(--t2);letter-spacing:.5px}
+.edlbl{font-size:9px;color:var(--t2)}
 .pb{font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:2px 6px;border-radius:10px}
 .pb.high{background:var(--rdim);color:var(--red)}.pb.medium{background:var(--adim);color:var(--amb)}.pb.low{background:var(--grdim);color:var(--grn)}
 .empty-s{display:flex;flex-direction:column;align-items:center;padding:24px 20px;color:var(--t3)}
 .empty-s .ei{font-size:28px;margin-bottom:7px;opacity:.4}
 .empty-s .et{font-size:9px;letter-spacing:2px;text-transform:uppercase;text-align:center}
 
-/* ══ SEARCH VIEW ═══════════════════════════════════ */
+/* ══ SEARCH ══ */
 .sbar{padding:10px 12px;border-bottom:1px solid var(--b);flex-shrink:0;display:flex;gap:8px;align-items:center}
-.sinput{flex:1;background:var(--bg3);border:1px solid var(--b);border-radius:9px;
-        padding:9px 13px;color:var(--tx);font-size:12px;outline:none;-webkit-appearance:none}
+.sinput{flex:1;background:var(--bg3);border:1px solid var(--b);border-radius:9px;padding:9px 13px;color:var(--tx);font-size:12px;outline:none;-webkit-appearance:none}
 .sinput:focus{border-color:var(--gold)}
 .sclr{background:0;border:none;color:var(--t3);font-size:16px;cursor:pointer;padding:3px 5px}
 .sres{flex:1;overflow-y:auto;padding:10px}
 
-/* ══ REPORT VIEW ════════════════════════════════════ */
+/* ══ REPORT ══ */
 .rhdr{padding:10px 12px;border-bottom:1px solid var(--b);flex-shrink:0;display:flex;gap:10px;align-items:center}
-.rsel{background:var(--bg3);border:1px solid var(--b);border-radius:8px;
-      padding:8px 11px;color:var(--tx);font-size:12px;letter-spacing:1px;
-      outline:none;-webkit-appearance:none;flex:1}
+.rsel{background:var(--bg3);border:1px solid var(--b);border-radius:8px;padding:8px 11px;color:var(--tx);font-size:12px;outline:none;-webkit-appearance:none;flex:1}
 .rcontent{flex:1;overflow-y:auto;padding:10px}
 .rstats{display:flex;gap:7px;margin-bottom:12px}
 .sbox{flex:1;background:var(--bg3);border:1px solid var(--b);border-radius:9px;padding:9px;text-align:center}
@@ -160,103 +148,112 @@ header{
 .slbl{font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-top:1px}
 .sbox.sh .snum{color:var(--red)}.sbox.sm .snum{color:var(--amb)}.sbox.sl .snum{color:var(--grn)}
 .rday{margin-bottom:12px}
-.rdlbl{font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:2px;color:var(--t2);
-       padding:3px 0 7px;border-bottom:1px solid var(--b);margin-bottom:7px;text-transform:uppercase}
+.rdlbl{font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:2px;color:var(--t2);padding:3px 0 7px;border-bottom:1px solid var(--b);margin-bottom:7px;text-transform:uppercase}
 
-/* ══ REMINDER MODAL ════════════════════════════════ */
-#remo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);
-      z-index:800;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
+/* ══ REMINDER ══ */
+#remo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:800;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
 #remo.open{display:flex}
-#remd{background:var(--bg2);border:1px solid var(--b);border-radius:16px 16px 0 0;
-      width:100%;max-width:600px;max-height:78vh;display:flex;flex-direction:column;
-      padding:16px 14px 28px;animation:su .28s cubic-bezier(.4,0,.2,1)}
-.remh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+#remd{background:var(--bg2);border:1px solid var(--b);border-radius:16px 16px 0 0;width:100%;max-width:600px;max-height:80vh;display:flex;flex-direction:column;padding:16px 14px 28px;animation:su .28s cubic-bezier(.4,0,.2,1)}
+.remh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px}
 .remtitle{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;letter-spacing:1px}
 .remsub{font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-top:2px}
-.remclose{background:0;border:1px solid var(--b);color:var(--t2);border-radius:7px;
-          padding:6px 12px;font-size:10px;letter-spacing:2px;cursor:pointer;flex-shrink:0}
-#remlist{overflow-y:auto;flex:1}
-.remi{background:var(--bg3);border:1px solid var(--b);border-radius:9px;
-      padding:9px 11px 9px 14px;margin-bottom:7px;position:relative;overflow:hidden;cursor:pointer}
+.remclose{background:0;border:1px solid var(--b);color:var(--t2);border-radius:7px;padding:6px 12px;font-size:10px;letter-spacing:2px;cursor:pointer;flex-shrink:0}
+#remlist{overflow-y:auto;flex:1;margin-top:12px}
+.remi{background:var(--bg3);border:1px solid var(--b);border-radius:9px;padding:9px 11px 9px 14px;margin-bottom:7px;position:relative;overflow:hidden;cursor:pointer}
 .remi::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
 .remi.high::before{background:var(--red)}.remi.medium::before{background:var(--amb)}.remi.low::before{background:var(--grn)}
-.remi:active{opacity:.75}
 .remit{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;margin-bottom:3px}
 .remim{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
 .remd2{font-size:10px;color:var(--gold);letter-spacing:1px;font-weight:500}
 
-/* ══ ENTRY MODAL ════════════════════════════════════ */
-#moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);
-          z-index:600;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+/* ══ ENTRY MODAL ══ */
+#moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:600;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
 #moverlay.open{display:flex}
-#mbox{background:var(--bg2);border:1px solid var(--b);border-radius:16px 16px 0 0;
-      width:100%;max-width:600px;max-height:92vh;overflow-y:auto;
-      padding:16px 14px 32px;animation:su .26s cubic-bezier(.4,0,.2,1)}
+#mbox{background:var(--bg2);border:1px solid var(--b);border-radius:16px 16px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;padding:16px 14px 32px;animation:su .26s cubic-bezier(.4,0,.2,1)}
 @keyframes su{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
 .mhandle{width:32px;height:3px;background:var(--b);border-radius:2px;margin:0 auto 16px}
 .mtitle{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;margin-bottom:14px;letter-spacing:1px}
 .fg{margin-bottom:11px}
 .fl{display:block;font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
-.fi,.fta{width:100%;background:var(--bg3);border:1px solid var(--b);border-radius:7px;
-         padding:9px 11px;color:var(--tx);font-size:13px;outline:none;-webkit-appearance:none;transition:border-color .2s}
+.fi,.fta{width:100%;background:var(--bg3);border:1px solid var(--b);border-radius:7px;padding:9px 11px;color:var(--tx);font-size:13px;outline:none;-webkit-appearance:none;transition:border-color .2s}
 .fi:focus,.fta:focus{border-color:var(--gold)}
 .fta{resize:none;height:66px;line-height:1.6}
 .frow{display:flex;gap:9px;margin-bottom:11px}
 .frow .fg{flex:1;margin:0}
 .prow{display:flex;gap:6px}
-.pbtn{flex:1;padding:8px 3px;border-radius:7px;border:1px solid var(--b);background:0;
-      color:var(--t2);font-size:9px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
+.pbtn{flex:1;padding:8px 3px;border-radius:7px;border:1px solid var(--b);background:0;color:var(--t2);font-size:9px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
 .pbtn[data-p=high].on{background:var(--rdim);border-color:var(--red);color:var(--red)}
 .pbtn[data-p=medium].on{background:var(--adim);border-color:var(--amb);color:var(--amb)}
 .pbtn[data-p=low].on{background:var(--grdim);border-color:var(--grn);color:var(--grn)}
-.izone{border:1px dashed var(--b);border-radius:7px;padding:12px;text-align:center;
-       cursor:pointer;position:relative;overflow:hidden}
+.izone{border:1px dashed var(--b);border-radius:7px;padding:12px;text-align:center;cursor:pointer;position:relative;overflow:hidden}
 .izone input{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:1}
 .iztxt{font-size:10px;color:var(--t3)}
 #ipr{width:100%;height:100px;object-fit:cover;border-radius:6px;display:none}
 .iprw{position:relative}
-#irm{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:10px;
-     background:rgba(0,0,0,.8);border:none;color:#fff;cursor:pointer;
-     display:none;align-items:center;justify-content:center;font-size:11px;z-index:2}
+#irm{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:10px;background:rgba(0,0,0,.8);border:none;color:#fff;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:11px;z-index:2}
 #ild{font-size:9px;color:var(--gold);margin-top:4px;display:none;letter-spacing:1px}
 .mact{display:flex;gap:8px;margin-top:14px}
-.bsave{flex:1;background:var(--gold);color:#0a0a0a;border:none;border-radius:7px;
-       padding:12px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500}
+.bsave{flex:1;background:var(--gold);color:#0a0a0a;border:none;border-radius:7px;padding:12px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500}
 .bsave:disabled{opacity:.5}
-.bcancel{background:0;border:1px solid var(--b);color:var(--t2);border-radius:7px;
-         padding:12px 14px;font-size:11px;letter-spacing:2px;cursor:pointer}
-.bdel{background:0;border:1px solid var(--red);color:var(--red);border-radius:7px;
-      padding:12px 11px;font-size:11px;cursor:pointer}
+.bcancel{background:0;border:1px solid var(--b);color:var(--t2);border-radius:7px;padding:12px 14px;font-size:11px;letter-spacing:2px;cursor:pointer}
+.bdel{background:0;border:1px solid var(--red);color:var(--red);border-radius:7px;padding:12px 11px;font-size:11px;cursor:pointer}
+
+/* ══ CODE MODAL (settings) ══ */
+#codemodal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:700;align-items:center;justify-content:center;padding:20px}
+#codemodal.open{display:flex}
+.codebox{background:var(--bg2);border:1px solid var(--b);border-radius:14px;padding:22px 18px;width:100%;max-width:340px}
+.codebox h3{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;margin-bottom:4px}
+.codebox p{font-size:10px;color:var(--t2);line-height:1.7;margin-bottom:16px}
+.code-display{background:var(--bg3);border:1px solid var(--gold);border-radius:8px;padding:12px;text-align:center;font-size:18px;letter-spacing:4px;color:var(--gold);margin-bottom:10px;cursor:pointer;word-break:break-all}
+.code-copy-hint{font-size:9px;color:var(--t3);text-align:center;margin-bottom:16px;letter-spacing:1px}
+.code-sep{font-size:9px;color:var(--t3);text-align:center;letter-spacing:2px;text-transform:uppercase;margin:12px 0}
+.code-inp{width:100%;background:var(--bg3);border:1px solid var(--b);border-radius:7px;padding:10px 12px;color:var(--tx);font-size:14px;letter-spacing:3px;outline:none;-webkit-appearance:none;text-transform:uppercase;margin-bottom:10px}
+.code-inp:focus{border-color:var(--gold)}
+.code-btns{display:flex;gap:8px}
+.code-btn{flex:1;background:var(--gold);color:#0a0a0a;border:none;border-radius:7px;padding:11px;font-size:10px;letter-spacing:2px;cursor:pointer;font-weight:500;text-transform:uppercase}
+.code-btn2{background:0;border:1px solid var(--b);color:var(--t2);border-radius:7px;padding:11px 12px;font-size:10px;letter-spacing:2px;cursor:pointer}
 
 /* FAB */
-#fab{position:fixed;right:14px;bottom:calc(var(--nav) + 12px);width:48px;height:48px;
-     border-radius:24px;background:var(--gold);color:#0a0a0a;border:none;font-size:24px;
-     cursor:pointer;box-shadow:0 4px 18px rgba(201,168,76,.45);
-     display:flex;align-items:center;justify-content:center;z-index:100;line-height:1}
+#fab{position:fixed;right:14px;bottom:calc(var(--nav) + 12px);width:48px;height:48px;border-radius:24px;background:var(--gold);color:#0a0a0a;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 18px rgba(201,168,76,.45);display:flex;align-items:center;justify-content:center;z-index:100;line-height:1}
 #fab:active{transform:scale(.9)}
 
 /* TOAST */
-#toast{position:fixed;bottom:calc(var(--nav) + 8px);left:50%;
-       transform:translateX(-50%) translateY(12px);background:var(--bg3);
-       border:1px solid var(--b);color:var(--tx);font-size:10px;letter-spacing:.5px;
-       padding:7px 14px;border-radius:14px;opacity:0;transition:all .22s;
-       z-index:700;pointer-events:none;white-space:nowrap}
+#toast{position:fixed;bottom:calc(var(--nav) + 8px);left:50%;transform:translateX(-50%) translateY(12px);background:var(--bg3);border:1px solid var(--b);color:var(--tx);font-size:10px;letter-spacing:.5px;padding:7px 14px;border-radius:14px;opacity:0;transition:all .22s;z-index:900;pointer-events:none;white-space:nowrap}
 #toast.sh{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 
-<div id="LS"><div class="ll">FİLİST</div><div class="ls">yükleniyor...</div></div>
+<div id="LS"><div class="ll">FİLİST</div><div class="ls" id="lsub">yükleniyor...</div></div>
 
+<!-- CODE SETUP SCREEN -->
+<div id="setup">
+  <div class="setup-logo">FİLİST</div>
+  <div class="setup-sub">Kişisel Ajanda</div>
+  <div class="setup-card">
+    <div class="setup-label">Kişisel Kodunuz</div>
+    <div class="setup-code" id="new-code">----</div>
+    <div class="setup-hint">Bu kodu bir yere not edin. Telefon temizlense bile bu kod ile tüm kayıtlarınıza erişebilirsiniz.</div>
+  </div>
+  <div class="setup-or">─── veya ───</div>
+  <input class="setup-inp" id="setup-inp" type="text" placeholder="ESKİ KODUNUZU GİRİN" maxlength="8">
+  <div class="setup-btns">
+    <button class="setup-btn" id="setup-new">Yeni Kod ile Başla</button>
+    <button class="setup-btn2" id="setup-restore">Eski Kodu Kullan</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
 <div id="app">
-  <!-- HEADER -->
   <header>
-    <div class="logo">Filist</div>
+    <div class="logo" id="logo-btn">Filist</div>
     <div class="hclk"><div id="clk">--:--:--</div><div id="cld">...</div></div>
-    <div style="flex:1;display:flex;justify-content:flex-end"><div class="sdot" id="sdot"></div></div>
+    <div style="flex:1;display:flex;justify-content:flex-end;align-items:center;gap:8px">
+      <div class="sdot" id="sdot"></div>
+    </div>
   </header>
 
-  <!-- CAL VIEW -->
+  <!-- CALENDAR VIEW -->
   <div class="view on" id="v-cal">
     <div class="tstrip">
       <div class="tnum" id="tnum">--</div>
@@ -272,13 +269,11 @@ header{
       <div class="cwd">Pe</div><div class="cwd">Cu</div><div class="cwd">Ct</div><div class="cwd">Pz</div>
     </div>
     <div class="cgrid" id="cgrid"></div>
-    <div id="dp" class="col">
-      <div class="dphead" id="dphead">
-        <div class="dptitle" id="dptitle">Gün seç</div>
-        <div style="display:flex;align-items:center">
-          <span class="dpcnt" id="dpcnt" style="display:none"></span>
-          <span class="dparr">⌄</span>
-        </div>
+    <!-- Day panel always visible -->
+    <div id="dp">
+      <div class="dphead">
+        <div class="dptitle" id="dptitle">Bugün</div>
+        <span class="dpcnt" id="dpcnt" style="display:none"></span>
       </div>
       <div id="elist"></div>
     </div>
@@ -291,21 +286,14 @@ header{
       <button class="sclr" id="sclr">✕</button>
     </div>
     <div class="sres" id="sres">
-      <div class="empty-s" style="padding-top:48px">
-        <div class="ei">🔍</div>
-        <div class="et">Tüm kayıtlarınızda<br>arama yapın</div>
-      </div>
+      <div class="empty-s" style="padding-top:48px"><div class="ei">🔍</div><div class="et">Tüm kayıtlarda<br>arama yapın</div></div>
     </div>
   </div>
 
   <!-- REPORT VIEW -->
   <div class="view" id="v-report">
-    <div class="rhdr">
-      <select class="rsel" id="rsel"></select>
-    </div>
-    <div class="rcontent" id="rcontent">
-      <div class="empty-s"><div class="ei">📊</div><div class="et">Ay seçin</div></div>
-    </div>
+    <div class="rhdr"><select class="rsel" id="rsel"></select></div>
+    <div class="rcontent" id="rcontent"><div class="empty-s"><div class="ei">📊</div><div class="et">Ay seçin</div></div></div>
   </div>
 </div>
 
@@ -327,14 +315,30 @@ header{
 
 <button id="fab">+</button>
 
-<!-- REMINDER MODAL -->
+<!-- REMINDER -->
 <div id="remo">
   <div id="remd">
     <div class="remh">
-      <div><div class="remtitle">📅 Yaklaşan Kayıtlar</div><div class="remsub">30 gün • öncelik sırasıyla</div></div>
-      <button class="remclose" onclick="closeRem()">Kapat</button>
+      <div><div class="remtitle">⏰ Yaklaşan Kayıtlar</div><div class="remsub">20 gün içinde • öncelik sırasıyla</div></div>
+      <button class="remclose" onclick="closeRem()">Tamam</button>
     </div>
     <div id="remlist"></div>
+  </div>
+</div>
+
+<!-- CODE MODAL (settings) -->
+<div id="codemodal">
+  <div class="codebox">
+    <h3>Kişisel Kodunuz</h3>
+    <p>Bu kodu not edin. Telefon temizlense bile bu kod ile tüm kayıtlarınıza erişirsiniz.</p>
+    <div class="code-display" id="code-display" onclick="copyCode()">----</div>
+    <div class="code-copy-hint">Koda tıklayarak kopyalayın</div>
+    <div class="code-sep">─ Farklı kod ile aç ─</div>
+    <input class="code-inp" id="code-inp" type="text" placeholder="YENİ KOD" maxlength="8">
+    <div class="code-btns">
+      <button class="code-btn2" onclick="closeCodeModal()">Kapat</button>
+      <button class="code-btn" onclick="switchCode()">Değiştir</button>
+    </div>
   </div>
 </div>
 
@@ -385,17 +389,50 @@ const TRD=['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Paza
 const TRS=['Pt','Sa','Ça','Pe','Cu','Ct','Pz'];
 const PO={high:0,medium:1,low:2};
 
-function getDID(){let id=localStorage.getItem('fld');if(!id){id='d_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7);localStorage.setItem('fld',id);}return id;}
-const DID=getDID();
-
+// ── FIREBASE ───────────────────────────────────────────
 firebase.initializeApp({apiKey:"AIzaSyDgF7iMi183LI1RkHnT0ZyAJAx_8ME4oLY",authDomain:"filist-83f78.firebaseapp.com",projectId:"filist-83f78",storageBucket:"filist-83f78.firebasestorage.app",messagingSenderId:"718317516714",appId:"1:718317516714:web:4dc1b822230538066cddd3"});
 const db=firebase.firestore();
 db.enablePersistence({synchronizeTabs:false}).catch(()=>{});
-const eRef=()=>db.collection('devices').doc(DID).collection('entries');
 
+// ── USER CODE SYSTEM ───────────────────────────────────
+// Code = 6-char alphanumeric, stored in localStorage
+// Firestore path: spaces/{code}/entries/{id}
+// User writes down code → can always restore data
+function genCode(){return Math.random().toString(36).slice(2,8).toUpperCase()}
+function getCode(){return localStorage.getItem('filist_code')}
+function setCode(c){localStorage.setItem('filist_code',c.toUpperCase())}
+function eRef(code){return db.collection('spaces').doc(code||getCode()).collection('entries')}
+
+// ── SETUP SCREEN ───────────────────────────────────────
+const existingCode=getCode();
+if(!existingCode){
+  // Show setup screen
+  const nc=genCode();
+  document.getElementById('new-code').textContent=nc;
+  document.getElementById('setup').classList.add('show');
+  document.getElementById('LS').classList.add('hide');
+  setTimeout(()=>document.getElementById('LS').style.display='none',500);
+
+  document.getElementById('setup-new').onclick=()=>{
+    setCode(nc);
+    document.getElementById('setup').classList.remove('show');
+    initApp();
+  };
+  document.getElementById('setup-restore').onclick=()=>{
+    const inp=document.getElementById('setup-inp').value.trim().toUpperCase();
+    if(inp.length<4){alert('Geçerli bir kod girin');return;}
+    setCode(inp);
+    document.getElementById('setup').classList.remove('show');
+    initApp();
+  };
+} else {
+  initApp();
+}
+
+// ── STATE ──────────────────────────────────────────────
 const NOW=new Date();
 let vY=NOW.getFullYear(),vM=NOW.getMonth(),selD=fmt(NOW);
-let all={},editId=null,selP='medium',imgF=null,exImg=null,curView='cal',loaded=false;
+let all={},editId=null,selP='medium',imgF=null,exImg=null,loaded=false;
 
 const $=id=>document.getElementById(id);
 function fmt(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
@@ -403,12 +440,11 @@ function pdt(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
 function p2(n){return String(n).padStart(2,'0')}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function plb(p){return p==='high'?'Yüksek':p==='low'?'Düşük':'Orta'}
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('sh');setTimeout(()=>t.classList.remove('sh'),2800)}
 function ss(s){$('sdot').className='sdot'+(s==='saving'?' saving':s==='err'?' err':'')}
 function daysFrom(ds){return Math.round((pdt(ds)-new Date(NOW.getFullYear(),NOW.getMonth(),NOW.getDate()))/864e5)}
 
-// ── CLOCK ───────────────────────────────────────────
+// ── CLOCK ──────────────────────────────────────────────
 function tick(){
   const n=new Date();
   $('clk').textContent=[n.getHours(),n.getMinutes(),n.getSeconds()].map(p2).join(':');
@@ -422,51 +458,85 @@ setInterval(tick,1000);tick();
 
 // ── VIEW SWITCH ─────────────────────────────────────
 function sv(v){
-  curView=v;
   ['cal','search','report'].forEach(x=>{$('v-'+x).classList.toggle('on',x===v);$('nv-'+x).classList.toggle('on',x===v)});
   $('fab').style.display=v==='cal'?'flex':'none';
   if(v==='report')renderReport();
   if(v==='search')setTimeout(()=>$('sinput').focus(),200);
 }
 
-// ── FIRESTORE ───────────────────────────────────────
-eRef().onSnapshot(snap=>{
-  all={};
-  snap.forEach(doc=>{const d={id:doc.id,...doc.data()};if(!all[d.date])all[d.date]=[];all[d.date].push(d)});
-  Object.values(all).forEach(a=>a.sort((x,y)=>PO[x.p||'medium']-PO[y.p||'medium']));
-  renderCal();renderDP(selD);ss('ok');
-  if(!loaded){
-    loaded=true;
-    $('LS').classList.add('hide');
-    setTimeout(()=>$('LS').style.display='none',450);
-    checkReminder();
-  }
-},err=>{ss('err');if(!loaded){loaded=true;$('LS').classList.add('hide');setTimeout(()=>$('LS').style.display='none',450);toast('Çevrimdışı mod');}});
+// ── CODE MODAL ─────────────────────────────────────────
+$('logo-btn').onclick=()=>{
+  $('code-display').textContent=getCode()||'----';
+  $('code-inp').value='';
+  $('codemodal').classList.add('open');
+};
+function closeCodeModal(){$('codemodal').classList.remove('open')}
+function copyCode(){
+  const code=getCode();
+  if(!code)return;
+  navigator.clipboard&&navigator.clipboard.writeText(code).then(()=>toast('Kod kopyalandı: '+code)).catch(()=>toast('Kodunuz: '+code));
+  if(!navigator.clipboard)toast('Kodunuz: '+code);
+}
+function switchCode(){
+  const inp=$('code-inp').value.trim().toUpperCase();
+  if(inp.length<4){toast('En az 4 karakter girin');return;}
+  if(!confirm(inp+' koduna geçmek istiyor musunuz?\nBu kodla kayıtlı veriler yüklenecek.'))return;
+  setCode(inp);
+  closeCodeModal();
+  location.reload();
+}
 
-// ── REMINDER ────────────────────────────────────────
-function checkReminder(){
-  const key=fmt(NOW);
-  if(localStorage.getItem('flr')===key) return;
+// ── MAIN INIT ──────────────────────────────────────────
+function initApp(){
+  // Firestore listener
+  eRef().onSnapshot(snap=>{
+    all={};
+    snap.forEach(doc=>{const d={id:doc.id,...doc.data()};if(!all[d.date])all[d.date]=[];all[d.date].push(d)});
+    Object.values(all).forEach(a=>a.sort((x,y)=>PO[x.p||'medium']-PO[y.p||'medium']));
+    renderCal();renderDP(selD);ss('ok');
+    if(!loaded){
+      loaded=true;
+      $('LS').classList.add('hide');
+      setTimeout(()=>$('LS').style.display='none',450);
+      // Show reminder EVERY TIME on open (user must close it)
+      showReminder();
+    }
+  },err=>{
+    ss('err');
+    if(!loaded){
+      loaded=true;
+      $('LS').classList.add('hide');
+      setTimeout(()=>$('LS').style.display='none',450);
+      toast('Çevrimdışı — önbellek yüklendi');
+      renderCal();renderDP(selD);
+    }
+  });
+}
+
+// ── REMINDER (every open, 20 days) ────────────────────
+function showReminder(){
   const up=[];
-  Object.entries(all).forEach(([ds,arr])=>{const df=daysFrom(ds);if(df>=0&&df<=30)arr.forEach(e=>up.push({...e,_ds:ds,_df:df}))});
+  Object.entries(all).forEach(([ds,arr])=>{
+    const df=daysFrom(ds);
+    if(df>=0&&df<=20) arr.forEach(e=>up.push({...e,_ds:ds,_df:df}));
+  });
   if(!up.length) return;
   up.sort((a,b)=>PO[a.p||'medium']-PO[b.p||'medium']||a._df-b._df);
-  localStorage.setItem('flr',key);
   const list=$('remlist');list.innerHTML='';
   up.forEach(e=>{
     const el=document.createElement('div');el.className='remi '+(e.p||'medium');
     const d=pdt(e._ds),di=(d.getDay()+6)%7;
     const dl=e._df===0?'Bugün':e._df===1?'Yarın':e._df+' gün sonra';
     el.innerHTML=`<div class="remit">${esc(e.title||'Başlıksız')}</div>
-      <div class="remim"><span class="remd2">${dl}</span><span class="etime">${TRD[di]} ${d.getDate()} ${TRM[d.getMonth()]}${e.time?' • '+e.time:''}</span><span class="pb ${e.p||'medium'}">${plb(e.p)}</span></div>`;
-    el.onclick=()=>{closeRem();selD=e._ds;vY=pdt(e._ds).getFullYear();vM=pdt(e._ds).getMonth();sv('cal');renderCal();renderDP(e._ds);$('dp').classList.remove('col');$('dp').classList.add('exp')};
+      <div class="remim"><span class="remd2">${dl}</span><span class="etime">${TRD[di]} ${d.getDate()} ${TRM[d.getMonth()]}${e.time?' · '+e.time:''}</span><span class="pb ${e.p||'medium'}">${plb(e.p)}</span></div>`;
+    el.onclick=()=>{closeRem();selD=e._ds;vY=pdt(e._ds).getFullYear();vM=pdt(e._ds).getMonth();sv('cal');renderCal();renderDP(e._ds)};
     list.appendChild(el);
   });
   $('remo').classList.add('open');
 }
 function closeRem(){$('remo').classList.remove('open')}
 
-// ── CALENDAR ────────────────────────────────────────
+// ── CALENDAR ──────────────────────────────────────────
 $('bprev').onclick=()=>{vM--;if(vM<0){vM=11;vY--;}renderCal()};
 $('bnext').onclick=()=>{vM++;if(vM>11){vM=0;vY++;}renderCal()};
 
@@ -496,8 +566,7 @@ function renderCal(){
   });
 }
 
-function pickDay(ds){selD=ds;renderCal();renderDP(ds);$('dp').classList.remove('col');$('dp').classList.add('exp')}
-$('dphead').onclick=()=>{$('dp').classList.toggle('col');$('dp').classList.toggle('exp')};
+function pickDay(ds){selD=ds;renderCal();renderDP(ds)}
 
 function renderDP(ds){
   const d=pdt(ds),di=(d.getDay()+6)%7;
@@ -506,7 +575,7 @@ function renderDP(ds){
   const cnt=$('dpcnt');
   if(de.length){cnt.textContent=de.length+' kayıt';cnt.style.display='inline';}else cnt.style.display='none';
   const el=$('elist');el.innerHTML='';
-  if(!de.length){el.innerHTML='<div class="empty-s"><div class="ei">📋</div><div class="et">Kayıt yok</div></div>';return;}
+  if(!de.length){el.innerHTML='<div class="empty-s"><div class="ei">📋</div><div class="et">Kayıt yok<br>+ ile ekle</div></div>';return;}
   de.forEach(e=>el.appendChild(mkCard(e,false)));
 }
 
@@ -522,14 +591,13 @@ function mkCard(e,showDate){
   return c;
 }
 
-// ── SEARCH ──────────────────────────────────────────
+// ── SEARCH ────────────────────────────────────────────
 $('sinput').addEventListener('input',doSearch);
 $('sclr').onclick=()=>{$('sinput').value='';doSearch()};
-
 function doSearch(){
   const q=$('sinput').value.trim().toLowerCase();
   const res=$('sres');
-  if(!q){res.innerHTML='<div class="empty-s" style="padding-top:48px"><div class="ei">🔍</div><div class="et">Tüm kayıtlarınızda<br>arama yapın</div></div>';return;}
+  if(!q){res.innerHTML='<div class="empty-s" style="padding-top:48px"><div class="ei">🔍</div><div class="et">Tüm kayıtlarda<br>arama yapın</div></div>';return;}
   const matches=[];
   Object.values(all).flat().forEach(e=>{if((e.title||'').toLowerCase().includes(q)||(e.note||'').toLowerCase().includes(q))matches.push(e)});
   matches.sort((a,b)=>b.date.localeCompare(a.date)||PO[a.p||'medium']-PO[b.p||'medium']);
@@ -539,7 +607,7 @@ function doSearch(){
   matches.forEach(e=>res.appendChild(mkCard(e,true)));
 }
 
-// ── REPORT ──────────────────────────────────────────
+// ── REPORT ────────────────────────────────────────────
 (function initRsel(){
   const sel=$('rsel');
   for(let i=11;i>=-3;i--){
@@ -575,18 +643,16 @@ function renderReport(){
   });
 }
 
-// ── ENTRY MODAL ─────────────────────────────────────
+// ── ENTRY MODAL ───────────────────────────────────────
 $('fab').onclick=openAdd;$('bcan').onclick=closeModal;$('bsav').onclick=handleSave;$('bdel').onclick=handleDel;
 $('moverlay').onclick=e=>{if(e.target===$('moverlay'))closeModal()};
 document.querySelectorAll('.pbtn').forEach(b=>{b.onclick=()=>{selP=b.dataset.p;document.querySelectorAll('.pbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on')}});
 $('fimg').onchange=e=>{const f=e.target.files[0];if(!f)return;imgF=f;const r=new FileReader();r.onload=ev=>{$('ipr').src=ev.target.result;$('ipr').style.display='block';$('irm').style.display='flex';$('iztxt').style.display='none'};r.readAsDataURL(f)};
 $('irm').onclick=e=>{e.stopPropagation();imgF=null;exImg=null;$('ipr').style.display='none';$('irm').style.display='none';$('iztxt').style.display='block';$('fimg').value=''};
-
 function resetM(){imgF=null;exImg=null;$('ftit').value='';$('fnot').value='';$('fdat').value=selD||fmt(NOW);const n=new Date();$('ftim').value=p2(n.getHours())+':'+p2(n.getMinutes());selP='medium';document.querySelectorAll('.pbtn').forEach(b=>b.classList.toggle('on',b.dataset.p==='medium'));$('ipr').style.display='none';$('irm').style.display='none';$('iztxt').style.display='block';$('fimg').value='';$('ild').style.display='none'}
 function openAdd(){editId=null;resetM();$('mtitle').textContent='Yeni Kayıt';$('bdel').style.display='none';$('moverlay').classList.add('open');setTimeout(()=>$('ftit').focus(),280)}
 function openEdit(e,ds){editId=e.id;exImg=e.img||null;imgF=null;$('mtitle').textContent='Kaydı Düzenle';$('ftit').value=e.title||'';$('fnot').value=e.note||'';$('fdat').value=e.date||ds;$('ftim').value=e.time||'';selP=e.p||'medium';document.querySelectorAll('.pbtn').forEach(b=>b.classList.toggle('on',b.dataset.p===selP));if(e.img){$('ipr').src=e.img;$('ipr').style.display='block';$('irm').style.display='flex';$('iztxt').style.display='none';}else{$('ipr').style.display='none';$('irm').style.display='none';$('iztxt').style.display='block';}$('fimg').value='';$('ild').style.display='none';$('bdel').style.display='inline-block';$('moverlay').classList.add('open')}
 function closeModal(){$('moverlay').classList.remove('open');editId=null}
-
 async function handleDel(){if(!editId||!confirm('Silinsin mi?'))return;try{ss('saving');await eRef().doc(editId).delete();ss('ok');toast('Silindi');closeModal();}catch{ss('err');toast('Hata')}}
 async function handleSave(){
   const tit=$('ftit').value.trim();if(!tit){toast('Başlık boş olamaz');return;}
@@ -596,16 +662,16 @@ async function handleSave(){
   if(!imgF&&!exImg)iu=null;
   const date=$('fdat').value||fmt(NOW);
   const data={title:tit,note:$('fnot').value.trim(),date,time:$('ftim').value,p:selP,img:iu||null,upd:Date.now()};
-  try{ss('saving');if(editId)await eRef().doc(editId).set(data);else await eRef().add({...data,crt:Date.now()});ss('ok');vY=pdt(date).getFullYear();vM=pdt(date).getMonth();selD=date;sv('cal');$('dp').classList.remove('col');$('dp').classList.add('exp');closeModal();toast(editId?'Güncellendi ✓':'Kaydedildi ✓');}
+  try{ss('saving');if(editId)await eRef().doc(editId).set(data);else await eRef().add({...data,crt:Date.now()});ss('ok');vY=pdt(date).getFullYear();vM=pdt(date).getMonth();selD=date;sv('cal');renderCal();renderDP(date);closeModal();toast(editId?'Güncellendi ✓':'Kaydedildi ✓');}
   catch(e){ss('err');toast('Hata: '+e.message);}
   finally{btn.disabled=false;btn.textContent='Kaydet';}
 }
 
-// ── SERVICE WORKER ───────────────────────────────────
+// ── SERVICE WORKER ────────────────────────────────────
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
     navigator.serviceWorker.register('/Filist-/sw.js',{scope:'/Filist-/'})
-      .then(r=>{r.addEventListener('updatefound',()=>toast('Güncelleme var — yenile'))})
+      .then(r=>r.addEventListener('updatefound',()=>toast('Güncelleme var')))
       .catch(e=>console.warn('SW:',e));
   });
 }
