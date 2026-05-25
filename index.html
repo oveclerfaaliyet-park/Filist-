@@ -59,7 +59,7 @@ input,textarea,button,select{font-family:'DM Mono',monospace}
 .pin-hint{font-size:9px;color:var(--t3);letter-spacing:2px;margin-top:18px;text-transform:uppercase}
 
 /* ── APP ── */
-#app{display:flex;flex-direction:column;height:100vh;display:none}
+#app{flex-direction:column;height:100vh;display:none}
 #app.show{display:flex}
 
 /* HEADER */
@@ -255,6 +255,11 @@ header{height:52px;display:flex;align-items:center;padding:0 14px;border-bottom:
 .type-btn .ti{font-size:22px;margin-bottom:4px}
 .type-btn .tl{font-size:9px;letter-spacing:2px;text-transform:uppercase}
 
+
+/* VIDEO type btn + multi-preview */
+.type-row .type-btn{flex:1}
+#fi-preview-grid img{width:100%;height:70px;object-fit:cover;border-radius:5px;border:1px solid var(--b)}
+.fi-card video{width:100%;height:108px;object-fit:cover;display:block}
 /* FAB */
 #fab{position:fixed;right:14px;bottom:20px;width:48px;height:48px;border-radius:24px;background:var(--gold);color:#0a0a0a;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 18px rgba(201,168,76,.45);display:flex;align-items:center;justify-content:center;z-index:100;line-height:1}
 #fab:active{transform:scale(.9)}
@@ -480,25 +485,40 @@ header{height:52px;display:flex;align-items:center;padding:0 14px;border-bottom:
     <div class="mtitle">İçerik Ekle</div>
     <div class="type-row">
       <div class="type-btn on" id="tp-photo" onclick="selType('photo')"><div class="ti">📷</div><div class="tl">Fotoğraf</div></div>
+      <div class="type-btn" id="tp-video" onclick="selType('video')"><div class="ti">🎬</div><div class="tl">Video</div></div>
       <div class="type-btn" id="tp-note" onclick="selType('note')"><div class="ti">📝</div><div class="tl">Not</div></div>
     </div>
     <div id="fi-photo">
-      <div class="fg"><div class="izone"><input type="file" id="fi-img-inp" accept="image/*">
-        <div class="iprw"><img class="ipr-img" id="fi-ipr" alt=""><button class="irm-btn" id="fi-irm" type="button">✕</button></div>
-        <div class="iztxt" id="fi-iztxt">📷 Fotoğraf seç</div>
-        <div class="ild" id="fi-ild">⏳ Yükleniyor...</div>
-      </div></div>
+      <div class="fg">
+        <div class="izone">
+          <input type="file" id="fi-img-inp" accept="image/*" multiple>
+          <div id="fi-preview-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:6px"></div>
+          <div class="iztxt" id="fi-iztxt">📷 Fotoğraf seç (çoklu seçim yapabilirsiniz)</div>
+          <div class="ild" id="fi-ild">⏳ Yükleniyor...</div>
+        </div>
+      </div>
+    </div>
+    <div id="fi-video" style="display:none">
+      <div class="fg"><label class="fl">Video URL (YouTube, Drive vb.)</label><input class="fi2" type="url" id="fi-vid-url" placeholder="https://youtube.com/..."></div>
+      <div style="text-align:center;color:var(--t3);font-size:9px;letter-spacing:2px;padding:6px 0">─ veya dosya seç ─</div>
+      <div class="fg">
+        <div class="izone">
+          <input type="file" id="fi-vid-inp" accept="video/*">
+          <div class="iztxt" id="fi-viztxt">🎬 Video dosyası seç</div>
+          <video id="fi-vid-prev" style="width:100%;max-height:150px;border-radius:7px;display:none;margin-top:6px" controls></video>
+        </div>
+      </div>
     </div>
     <div id="fi-note" style="display:none">
-      <div class="fg"><label class="fl">Not</label><textarea class="fta" id="fi-note-inp" placeholder="Notunuzu yazın..." style="height:120px"></textarea></div>
+      <div class="fg"><label class="fl">Not</label><textarea class="fta" id="fi-note-inp" placeholder="Notunuzu yazın..." style="height:110px"></textarea></div>
     </div>
+    <div id="fi-prog" style="display:none;font-size:10px;color:var(--gold);letter-spacing:1px;text-align:center;padding:6px 0"></div>
     <div class="mact">
       <button class="bcancel" onclick="cFimo()">İptal</button>
       <button class="bsave" id="fi-sav">Ekle</button>
     </div>
   </div>
 </div>
-
 <!-- CHANGE PIN MODAL -->
 <div class="mo" id="cpm">
   <div class="mbox">
@@ -866,44 +886,105 @@ $('fd-del').onclick=async()=>{
 };
 
 $('fd-add').onclick=()=>{
-  fiType='photo';fiImgF=null;selType('photo');
-  $('fi-note-inp').value='';$('fi-ipr').src='';
-  $('fi-ipr').style.display='none';$('fi-irm').style.display='none';
-  $('fi-iztxt').style.display='block';$('fi-ild').style.display='none';
-  $('fi-img-inp').value='';$('fimo').classList.add('open');
+  fiType='photo';fiImgF=null;fiImgFiles=[];selType('photo');
+  $('fi-note-inp').value='';
+  $('fi-preview-grid').innerHTML='';$('fi-iztxt').style.display='block';
+  $('fi-ild').style.display='none';$('fi-img-inp').value='';
+  $('fi-vid-url').value='';$('fi-vid-prev').style.display='none';$('fi-viztxt').style.display='block';
+  $('fi-vid-inp').value='';$('fi-prog').style.display='none';
+  $('fimo').classList.add('open');
 };
 function cFimo(){$('fimo').classList.remove('open')}
 $('fimo').onclick=e=>{if(e.target===$('fimo'))cFimo()};
+
+let fiImgFiles=[];
 function selType(t){
-  fiType=t;$('tp-photo').classList.toggle('on',t==='photo');$('tp-note').classList.toggle('on',t==='note');
-  $('fi-photo').style.display=t==='photo'?'block':'none';$('fi-note').style.display=t==='note'?'block':'none';
+  fiType=t;
+  ['photo','video','note'].forEach(x=>$('tp-'+x)&&$('tp-'+x).classList.toggle('on',x===t));
+  $('fi-photo').style.display=t==='photo'?'block':'none';
+  $('fi-video').style.display=t==='video'?'block':'none';
+  $('fi-note').style.display=t==='note'?'block':'none';
 }
+
 $('fi-img-inp').onchange=e=>{
-  const f=e.target.files[0];if(!f)return;fiImgF=f;
-  const r=new FileReader();r.onload=ev=>{$('fi-ipr').src=ev.target.result;$('fi-ipr').style.display='block';$('fi-irm').style.display='flex';$('fi-iztxt').style.display='none'};r.readAsDataURL(f);
+  fiImgFiles=Array.from(e.target.files);
+  const grid=$('fi-preview-grid');grid.innerHTML='';
+  if(!fiImgFiles.length){$('fi-iztxt').style.display='block';return;}
+  $('fi-iztxt').style.display='none';
+  fiImgFiles.forEach(f=>{
+    const img=document.createElement('img');
+    img.style.cssText='width:100%;height:70px;object-fit:cover;border-radius:5px;border:1px solid var(--b)';
+    const r=new FileReader();r.onload=ev=>img.src=ev.target.result;r.readAsDataURL(f);
+    grid.appendChild(img);
+  });
 };
-$('fi-irm').onclick=e=>{e.stopPropagation();fiImgF=null;$('fi-ipr').style.display='none';$('fi-irm').style.display='none';$('fi-iztxt').style.display='block';$('fi-img-inp').value=''};
+
+$('fi-vid-inp').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const url=URL.createObjectURL(f);
+  $('fi-vid-prev').src=url;$('fi-vid-prev').style.display='block';$('fi-viztxt').style.display='none';
+};
+
 $('fi-sav').onclick=async()=>{
   if(!curFolderId)return;
   const btn=$('fi-sav');btn.disabled=true;btn.textContent='...';
   try{
     if(fiType==='photo'){
-      if(!fiImgF){toast('Fotoğraf seçin');btn.disabled=false;btn.textContent='Ekle';return;}
-      $('fi-ild').style.display='block';ss('saving');
-      const fd=new FormData();fd.append('image',fiImgF);
-      const r=await fetch(`https://api.imgbb.com/1/upload?key=${IK}`,{method:'POST',body:fd});
-      const j=await r.json();$('fi-ild').style.display='none';
-      if(!j.success){toast('Resim yüklenemedi');btn.disabled=false;btn.textContent='Ekle';return;}
-      await fiRef(curFolderId).add({type:'photo',img:j.data.url,created:Date.now()});
+      if(!fiImgFiles.length){toast('Fotoğraf seçin');btn.disabled=false;btn.textContent='Ekle';return;}
+      $('fi-ild').style.display='block';$('fi-prog').style.display='block';ss('saving');
+      let uploaded=0;
+      for(const f of fiImgFiles){
+        $('fi-prog').textContent=(uploaded+1)+' / '+fiImgFiles.length+' yükleniyor...';
+        const fd=new FormData();fd.append('image',f);
+        const r=await fetch('https://api.imgbb.com/1/upload?key='+IK,{method:'POST',body:fd});
+        const j=await r.json();
+        if(j.success){
+          await fiRef(curFolderId).add({type:'photo',img:j.data.url,created:Date.now()+uploaded});
+          uploaded++;
+        }
+      }
+      $('fi-ild').style.display='none';$('fi-prog').style.display='none';
       const snap=await fiRef(curFolderId).get();
-      await fRef().doc(curFolderId).update({thumb:j.data.url,count:snap.size});
+      // Get latest photo for thumb
+      let thumb=null;
+      snap.forEach(d=>{if(d.data().type==='photo'&&!thumb)thumb=d.data().img});
+      await fRef().doc(curFolderId).update({thumb,count:snap.size});
+      toast(uploaded+' fotoğraf eklendi ✓');
+
+    } else if(fiType==='video'){
+      const urlVal=$('fi-vid-url').value.trim();
+      const vidFile=$('fi-vid-inp').files[0];
+      if(!urlVal&&!vidFile){toast('Video URL girin veya dosya seçin');btn.disabled=false;btn.textContent='Ekle';return;}
+      let videoData={type:'video',created:Date.now()};
+      if(urlVal){
+        videoData.url=urlVal;
+        // Detect YouTube
+        if(urlVal.includes('youtu')){
+          const m=urlVal.match(/(?:v=|youtu\.be\/)([\w-]{11})/);
+          if(m)videoData.ytid=m[1];
+        }
+      } else {
+        // Store as base64 (small videos only - warn user)
+        toast('Video dosyaları yalnızca bu cihazda görünür. URL önerilir.');
+        const buf=await vidFile.arrayBuffer();
+        if(buf.byteLength>10*1024*1024){toast('Video 10MB altında olmalı');btn.disabled=false;btn.textContent='Ekle';return;}
+        const b64=btoa(String.fromCharCode(...new Uint8Array(buf)));
+        videoData.b64='data:'+vidFile.type+';base64,'+b64;
+        videoData.name=vidFile.name;
+      }
+      await fiRef(curFolderId).add(videoData);
+      const snap=await fiRef(curFolderId).get();
+      await fRef().doc(curFolderId).update({count:snap.size});
+      toast('Video eklendi ✓');
+
     } else {
       const note=$('fi-note-inp').value.trim();if(!note){toast('Not boş olamaz');btn.disabled=false;btn.textContent='Ekle';return;}
       await fiRef(curFolderId).add({type:'note',note,created:Date.now()});
       const snap=await fiRef(curFolderId).get();
       await fRef().doc(curFolderId).update({count:snap.size});
+      toast('Not eklendi ✓');
     }
-    ss('ok');cFimo();renderFolderItems(curFolderId);toast('Eklendi ✓');
+    ss('ok');cFimo();renderFolderItems(curFolderId);
   }catch(e){ss('err');toast('Hata: '+e.message);}
   finally{btn.disabled=false;btn.textContent='Ekle';}
 };
@@ -911,20 +992,32 @@ $('fi-sav').onclick=async()=>{
 function renderFolderItems(fid){
   const g=$('fd-grid');g.innerHTML='';
   fiRef(fid).orderBy('created','desc').get().then(snap=>{
-    if(snap.empty){g.innerHTML='<div class="empty-s" style="grid-column:1/-1;padding-top:32px"><div class="ei">🖼️</div><div class="et">Henüz öğe yok · Ekle butonuna bas</div></div>';return;}
+    if(snap.empty){g.innerHTML='<div class="empty-s" style="grid-column:1/-1;padding-top:32px"><div class="ei">🖼️</div><div class="et">Öğe yok · Ekle butonuna bas</div></div>';return;}
     snap.forEach(doc=>g.appendChild(mkFiCard({id:doc.id,...doc.data()},fid)));
-  }).catch(()=>toast('Öğeler yüklenemedi'));
+  }).catch(()=>toast('Yüklenemedi'));
 }
+
 function mkFiCard(item,fid){
   const c=document.createElement('div');c.className='fi-card';
   if(item.type==='photo'){
-    c.innerHTML=`<img class="fi-img" src="${esc(item.img)}" alt="" loading="lazy"><button class="fi-del" data-id="${item.id}">✕</button>`;
+    c.innerHTML='<img class="fi-img" src="'+esc(item.img)+'" alt="" loading="lazy"><button class="fi-del" data-id="'+item.id+'">✕</button>';
     c.querySelector('.fi-img').onclick=()=>oLb(item.img);
+  } else if(item.type==='video'){
+    if(item.ytid){
+      c.innerHTML='<div style="position:relative;cursor:pointer"><img class="fi-img" src="https://img.youtube.com/vi/'+item.ytid+'/mqdefault.jpg" loading="lazy"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center"><div style="width:40px;height:40px;background:rgba(255,0,0,.8);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px">▶</div></div></div><button class="fi-del" data-id="'+item.id+'">✕</button>';
+      c.querySelector('img').onclick=()=>window.open('https://youtu.be/'+item.ytid,'_blank');
+    } else if(item.url){
+      c.innerHTML='<div class="fi-note-card"><div style="font-size:22px;margin-bottom:6px">🎬</div><div class="fi-note-txt" style="font-size:10px;word-break:break-all">'+esc(item.url)+'</div></div><button class="fi-del" data-id="'+item.id+'">✕</button>';
+      c.querySelector('.fi-note-card').onclick=()=>window.open(item.url,'_blank');
+    } else if(item.b64){
+      c.innerHTML='<video class="fi-img" src="'+item.b64+'" style="height:108px;object-fit:cover" controls></video><button class="fi-del" data-id="'+item.id+'">✕</button>';
+    }
   } else {
     const d=new Date(item.created);
-    c.innerHTML=`<div class="fi-note-card"><div class="fi-note-txt">${esc(item.note)}</div><div class="fi-note-date">${d.getDate()+' '+TRM[d.getMonth()]+' '+d.getFullYear()}</div></div><button class="fi-del" data-id="${item.id}">✕</button>`;
+    c.innerHTML='<div class="fi-note-card"><div class="fi-note-txt">'+esc(item.note)+'</div><div class="fi-note-date">'+d.getDate()+' '+TRM[d.getMonth()]+' '+d.getFullYear()+'</div></div><button class="fi-del" data-id="'+item.id+'">✕</button>';
   }
-  c.querySelector('.fi-del').onclick=async e=>{
+  const delBtn=c.querySelector('.fi-del');
+  if(delBtn) delBtn.onclick=async e=>{
     e.stopPropagation();if(!confirm('Silinsin mi?'))return;
     await fiRef(fid).doc(item.id).delete();
     const snap=await fiRef(fid).get();

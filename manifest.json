@@ -1,8 +1,9 @@
 {
+  "id": "/Filist-/",
   "name": "Filist — Kişisel Ajanda",
   "short_name": "Filist",
   "description": "Takvimli kişisel ajanda",
-  "start_url": "/Filist-/",
+  "start_url": "/Filist-/index.html",
   "scope": "/Filist-/",
   "display": "standalone",
   "orientation": "portrait-primary",
@@ -10,6 +11,7 @@
   "theme_color": "#0a0a0a",
   "lang": "tr",
   "prefer_related_applications": false,
+  "categories": ["productivity", "utilities"],
   "icons": [
     { "src": "/Filist-/icons/icon-72.png",  "sizes": "72x72",   "type": "image/png", "purpose": "any" },
     { "src": "/Filist-/icons/icon-96.png",  "sizes": "96x96",   "type": "image/png", "purpose": "any" },
