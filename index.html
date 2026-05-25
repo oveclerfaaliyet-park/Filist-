@@ -544,7 +544,20 @@ header{height:52px;display:flex;align-items:center;padding:0 14px;border-bottom:
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
 'use strict';
-const IK='a584cfae6e7f9786deba8aac1f0afe56';
+const CLD_CLOUD='dz6ylhjdu';
+const CLD_PRESET='ml_default';
+
+async function uploadCloudinary(file){
+  const fd=new FormData();
+  fd.append('file',file);
+  fd.append('upload_preset',CLD_PRESET);
+  const isVideo=file.type.startsWith('video/');
+  const endpoint=`https://api.cloudinary.com/v1_1/${CLD_CLOUD}/${isVideo?'video':'image'}/upload`;
+  const r=await fetch(endpoint,{method:'POST',body:fd});
+  const j=await r.json();
+  if(j.secure_url) return {url:j.secure_url,type:isVideo?'video':'photo',public_id:j.public_id,thumb:isVideo?(j.secure_url.replace('/upload/','/upload/so_0,w_400,h_300,c_fill,f_jpg/')):null};
+  throw new Error(j.error?.message||'Yükleme başarısız');
+}
 const TRM=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
 const TRD=['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'];
 const TRS=['Pt','Sa','Ça','Pe','Cu','Ct','Pz'];
@@ -931,60 +944,56 @@ $('fi-sav').onclick=async()=>{
   try{
     if(fiType==='photo'){
       if(!fiImgFiles.length){toast('Fotoğraf seçin');btn.disabled=false;btn.textContent='Ekle';return;}
-      $('fi-ild').style.display='block';$('fi-prog').style.display='block';ss('saving');
-      let uploaded=0;
+      $('fi-prog').style.display='block';ss('saving');
+      let uploaded=0;let lastUrl=null;
       for(const f of fiImgFiles){
         $('fi-prog').textContent=(uploaded+1)+' / '+fiImgFiles.length+' yükleniyor...';
-        const fd=new FormData();fd.append('image',f);
-        const r=await fetch('https://api.imgbb.com/1/upload?key='+IK,{method:'POST',body:fd});
-        const j=await r.json();
-        if(j.success){
-          await fiRef(curFolderId).add({type:'photo',img:j.data.url,created:Date.now()+uploaded});
-          uploaded++;
-        }
+        const res=await uploadCloudinary(f);
+        await fiRef(curFolderId).add({type:'photo',img:res.url,created:Date.now()+uploaded});
+        lastUrl=res.url;uploaded++;
       }
-      $('fi-ild').style.display='none';$('fi-prog').style.display='none';
+      $('fi-prog').style.display='none';
       const snap=await fiRef(curFolderId).get();
-      // Get latest photo for thumb
-      let thumb=null;
-      snap.forEach(d=>{if(d.data().type==='photo'&&!thumb)thumb=d.data().img});
-      await fRef().doc(curFolderId).update({thumb,count:snap.size});
-      toast(uploaded+' fotoğraf eklendi ✓');
+      let thumb=null;snap.forEach(d=>{if(d.data().type==='photo'&&!thumb)thumb=d.data().img});
+      await fRef().doc(curFolderId).update({thumb:lastUrl||thumb,count:snap.size});
+      ss('ok');toast(uploaded+' fotoğraf eklendi ✓');
 
     } else if(fiType==='video'){
-      const urlVal=$('fi-vid-url').value.trim();
       const vidFile=$('fi-vid-inp').files[0];
-      if(!urlVal&&!vidFile){toast('Video URL girin veya dosya seçin');btn.disabled=false;btn.textContent='Ekle';return;}
-      let videoData={type:'video',created:Date.now()};
-      if(urlVal){
-        videoData.url=urlVal;
-        // Detect YouTube
+      const urlVal=$('fi-vid-url').value.trim();
+      if(!vidFile&&!urlVal){toast('Video seçin veya URL girin');btn.disabled=false;btn.textContent='Ekle';return;}
+      if(vidFile){
+        $('fi-prog').style.display='block';
+        $('fi-prog').textContent='Video yükleniyor... (büyük dosyalar biraz sürebilir)';
+        ss('saving');
+        const res=await uploadCloudinary(vidFile);
+        $('fi-prog').style.display='none';
+        await fiRef(curFolderId).add({type:'video',url:res.url,thumb:res.thumb,created:Date.now()});
+        const snap=await fiRef(curFolderId).get();
+        await fRef().doc(curFolderId).update({count:snap.size});
+        ss('ok');toast('Video eklendi ✓');
+      } else {
+        // URL based
+        let videoData={type:'video',url:urlVal,created:Date.now()};
         if(urlVal.includes('youtu')){
           const m=urlVal.match(/(?:v=|youtu\.be\/)([\w-]{11})/);
           if(m)videoData.ytid=m[1];
         }
-      } else {
-        // Store as base64 (small videos only - warn user)
-        toast('Video dosyaları yalnızca bu cihazda görünür. URL önerilir.');
-        const buf=await vidFile.arrayBuffer();
-        if(buf.byteLength>10*1024*1024){toast('Video 10MB altında olmalı');btn.disabled=false;btn.textContent='Ekle';return;}
-        const b64=btoa(String.fromCharCode(...new Uint8Array(buf)));
-        videoData.b64='data:'+vidFile.type+';base64,'+b64;
-        videoData.name=vidFile.name;
+        await fiRef(curFolderId).add(videoData);
+        const snap=await fiRef(curFolderId).get();
+        await fRef().doc(curFolderId).update({count:snap.size});
+        ss('ok');toast('Video eklendi ✓');
       }
-      await fiRef(curFolderId).add(videoData);
-      const snap=await fiRef(curFolderId).get();
-      await fRef().doc(curFolderId).update({count:snap.size});
-      toast('Video eklendi ✓');
 
     } else {
-      const note=$('fi-note-inp').value.trim();if(!note){toast('Not boş olamaz');btn.disabled=false;btn.textContent='Ekle';return;}
+      const note=$('fi-note-inp').value.trim();
+      if(!note){toast('Not boş olamaz');btn.disabled=false;btn.textContent='Ekle';return;}
       await fiRef(curFolderId).add({type:'note',note,created:Date.now()});
       const snap=await fiRef(curFolderId).get();
       await fRef().doc(curFolderId).update({count:snap.size});
-      toast('Not eklendi ✓');
+      ss('ok');toast('Not eklendi ✓');
     }
-    ss('ok');cFimo();renderFolderItems(curFolderId);
+    cFimo();renderFolderItems(curFolderId);
   }catch(e){ss('err');toast('Hata: '+e.message);}
   finally{btn.disabled=false;btn.textContent='Ekle';}
 };
@@ -1006,11 +1015,13 @@ function mkFiCard(item,fid){
     if(item.ytid){
       c.innerHTML='<div style="position:relative;cursor:pointer"><img class="fi-img" src="https://img.youtube.com/vi/'+item.ytid+'/mqdefault.jpg" loading="lazy"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center"><div style="width:40px;height:40px;background:rgba(255,0,0,.8);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px">▶</div></div></div><button class="fi-del" data-id="'+item.id+'">✕</button>';
       c.querySelector('img').onclick=()=>window.open('https://youtu.be/'+item.ytid,'_blank');
+    } else if(item.thumb){
+      // Cloudinary video with thumbnail
+      c.innerHTML='<div style="position:relative;cursor:pointer"><img class="fi-img" src="'+esc(item.thumb)+'" loading="lazy"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center"><div style="width:40px;height:40px;background:rgba(0,0,0,.65);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px">▶</div></div></div><button class="fi-del" data-id="'+item.id+'">✕</button>';
+      c.querySelector('div[style]').onclick=()=>oVid(item.url);
     } else if(item.url){
-      c.innerHTML='<div class="fi-note-card"><div style="font-size:22px;margin-bottom:6px">🎬</div><div class="fi-note-txt" style="font-size:10px;word-break:break-all">'+esc(item.url)+'</div></div><button class="fi-del" data-id="'+item.id+'">✕</button>';
-      c.querySelector('.fi-note-card').onclick=()=>window.open(item.url,'_blank');
-    } else if(item.b64){
-      c.innerHTML='<video class="fi-img" src="'+item.b64+'" style="height:108px;object-fit:cover" controls></video><button class="fi-del" data-id="'+item.id+'">✕</button>';
+      c.innerHTML='<div style="position:relative;cursor:pointer;background:var(--bg3);height:108px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px"><div style="font-size:28px">🎬</div><div style="font-size:9px;color:var(--t3);letter-spacing:1px">VIDEO</div></div><button class="fi-del" data-id="'+item.id+'">✕</button>';
+      c.querySelector('div[style]').onclick=()=>oVid(item.url);
     }
   } else {
     const d=new Date(item.created);
@@ -1030,7 +1041,22 @@ function mkFiCard(item,fid){
 
 // ── LIGHTBOX ──────────────────────────────────────────
 function oLb(src){$('lb-img').src=src;$('lb').classList.add('open')}
-function cLb(){$('lb').classList.remove('open')}
+function oVid(src){
+  // Open video in lightbox
+  const lb=$('lb');
+  $('lb-img').style.display='none';
+  let vid=document.getElementById('lb-vid');
+  if(!vid){vid=document.createElement('video');vid.id='lb-vid';vid.controls=true;vid.style.cssText='max-width:95vw;max-height:85vh;border-radius:8px';lb.insertBefore(vid,$('lb-close'));}
+  vid.src=src;vid.style.display='block';
+  lb.classList.add('open');
+  vid.play().catch(()=>{});
+}
+function cLb(){
+  $('lb').classList.remove('open');
+  const vid=document.getElementById('lb-vid');
+  if(vid){vid.pause();vid.src='';vid.style.display='none';}
+  $('lb-img').style.display='block';
+}
 $('lb').onclick=e=>{if(e.target===$('lb'))cLb()}
 
 // ── ENTRY MODAL ───────────────────────────────────────
@@ -1048,7 +1074,7 @@ async function handleSave(){
   const tit=$('ftit').value.trim();if(!tit){toast('Başlık boş olamaz');return;}
   const btn=$('bsav');btn.disabled=true;btn.textContent='...';
   let iu=exImg;
-  if(imgF){$('ild').style.display='block';ss('saving');try{const fd=new FormData();fd.append('image',imgF);const r=await fetch(`https://api.imgbb.com/1/upload?key=${IK}`,{method:'POST',body:fd});const j=await r.json();iu=j.success?j.data.url:null;if(!j.success)toast('Resim yüklenemedi');}catch{toast('Resim yüklenemedi');}$('ild').style.display='none';}
+  if(imgF){$('ild').style.display='block';ss('saving');try{const res=await uploadCloudinary(imgF);iu=res.url;}catch{toast('Resim yüklenemedi');iu=null;}$('ild').style.display='none';}
   if(!imgF&&!exImg)iu=null;
   const date=$('fdat').value||fmt(NOW);
   const data={title:tit,note:$('fnot').value.trim(),date,time:$('ftim').value,p:selP,img:iu||null,upd:Date.now()};
