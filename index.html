@@ -21,80 +21,98 @@
   --tx:#e8e0d0;--t2:#907e6a;--t3:#4a4540;
   --red:#c0392b;--amb:#d4821a;--grn:#27ae60;
   --rdim:rgba(192,57,43,.18);--adim:rgba(212,130,26,.18);--grdim:rgba(39,174,96,.18);
-  --nav:54px;--hdr:52px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-family:'DM Mono',monospace}
 input,textarea,button,select{font-family:'DM Mono',monospace}
 ::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:var(--b)}
 
-/* ── LOADING ── */
-#LS{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .4s}
-#LS.hide{opacity:0;pointer-events:none}
-.ll{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:var(--gold);letter-spacing:8px;animation:pu 1.8s ease-in-out infinite}
-@keyframes pu{0%,100%{opacity:.2}50%{opacity:1}}
-.ls{font-size:9px;letter-spacing:3px;color:var(--t3);margin-top:10px;text-transform:uppercase}
+/* ── FULLSCREEN SCREENS ── */
+.screen{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;padding:28px 24px;z-index:9000}
+.screen.show{display:flex}
+.logo-big{font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:300;color:var(--gold);letter-spacing:8px;margin-bottom:6px}
+.logo-sub{font-size:9px;letter-spacing:3px;color:var(--t3);text-transform:uppercase}
 
-/* ── CODE SETUP SCREEN ── */
-#setup{position:fixed;inset:0;background:var(--bg);z-index:8000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px}
-#setup.show{display:flex}
-.setup-logo{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;color:var(--gold);letter-spacing:6px;margin-bottom:6px}
-.setup-sub{font-size:9px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:40px}
-.setup-card{background:var(--bg2);border:1px solid var(--b);border-radius:14px;padding:20px;width:100%;max-width:340px;margin-bottom:16px}
-.setup-label{font-size:9px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:10px}
-.setup-code{font-size:22px;letter-spacing:4px;color:var(--gold);font-weight:500;margin-bottom:10px;word-break:break-all}
-.setup-hint{font-size:10px;color:var(--t2);line-height:1.7}
-.setup-or{font-size:9px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin:14px 0;text-align:center}
-.setup-inp{width:100%;background:var(--bg3);border:1px solid var(--b);border-radius:8px;padding:11px 13px;color:var(--tx);font-size:14px;letter-spacing:2px;outline:none;-webkit-appearance:none;text-transform:uppercase;max-width:340px}
-.setup-inp:focus{border-color:var(--gold)}
-.setup-btns{display:flex;flex-direction:column;gap:9px;width:100%;max-width:340px;margin-top:16px}
-.setup-btn{background:var(--gold);color:#0a0a0a;border:none;border-radius:9px;padding:14px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500}
-.setup-btn2{background:0;border:1px solid var(--b);color:var(--t2);border-radius:9px;padding:12px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer}
+/* SETUP */
+.setup-card{background:var(--bg2);border:1px solid var(--b);border-radius:14px;padding:18px;width:100%;max-width:340px;margin:28px 0 18px}
+.setup-label{font-size:9px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:8px}
+.setup-hint{font-size:10px;color:var(--t2);line-height:1.8}
+.big-inp{width:100%;max-width:340px;background:var(--bg3);border:1px solid var(--b);border-radius:9px;padding:13px 14px;color:var(--tx);font-size:15px;letter-spacing:3px;outline:none;-webkit-appearance:none;text-transform:uppercase;margin-bottom:10px}
+.big-inp:focus{border-color:var(--gold)}
+.big-inp.pin-inp{font-size:22px;letter-spacing:8px;text-align:center;-webkit-text-security:disc}
+.big-btn{width:100%;max-width:340px;background:var(--gold);color:#0a0a0a;border:none;border-radius:9px;padding:14px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500;margin-bottom:8px}
+.small-btn{width:100%;max-width:340px;background:0;border:1px solid var(--b);color:var(--t2);border-radius:9px;padding:12px;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer}
+.step-label{font-size:9px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:6px;align-self:flex-start;max-width:340px}
+.err-txt{font-size:10px;color:var(--red);letter-spacing:1px;text-align:center;min-height:16px;margin-bottom:6px}
+
+/* PIN SCREEN */
+#pin-screen{background:radial-gradient(ellipse at 50% 30%,rgba(201,168,76,.06) 0%,transparent 70%)}
+.pin-dots{display:flex;gap:14px;margin:24px 0 32px}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--b);transition:all .15s}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold)}
+.pin-dot.err{background:var(--red);border-color:var(--red)}
+.pin-pad{display:grid;grid-template-columns:repeat(3,72px);gap:10px}
+.pin-key{width:72px;height:52px;border-radius:10px;border:1px solid var(--b);background:var(--bg2);color:var(--tx);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;-webkit-user-select:none}
+.pin-key:active{background:var(--bg3);border-color:var(--gold)}
+.pin-key.zero{grid-column:2}
+.pin-key.del{font-size:16px}
+.pin-hint{font-size:9px;color:var(--t3);letter-spacing:2px;margin-top:18px;text-transform:uppercase}
 
 /* ── APP ── */
-#app{display:flex;flex-direction:column;height:100vh;padding-bottom:var(--nav)}
+#app{display:flex;flex-direction:column;height:100vh;display:none}
+#app.show{display:flex}
 
-/* ── HEADER ── */
-header{height:var(--hdr);display:flex;align-items:center;padding:0 14px;border-bottom:1px solid var(--b);flex-shrink:0;gap:8px}
-.logo{font-family:'Cormorant Garamond',serif;font-size:19px;letter-spacing:4px;color:var(--gold);font-weight:300;cursor:pointer}
-.hclk{flex:1;text-align:center}
-#clk{font-size:17px;letter-spacing:2px;line-height:1.2}
-#cld{font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase}
-.sdot{width:6px;height:6px;border-radius:50%;background:var(--grn);margin-left:auto;flex-shrink:0;transition:background .3s}
+/* HEADER */
+header{height:52px;display:flex;align-items:center;padding:0 14px;border-bottom:1px solid var(--b);flex-shrink:0;gap:10px}
+.ham{width:30px;height:30px;display:flex;flex-direction:column;justify-content:center;gap:5px;cursor:pointer;flex-shrink:0}
+.ham span{display:block;height:1.5px;background:var(--tx);border-radius:2px}
+.hlogo{font-family:'Cormorant Garamond',serif;font-size:19px;letter-spacing:4px;color:var(--gold);font-weight:300;flex:1;text-align:center}
+.hclk{text-align:right}
+#clk{font-size:15px;letter-spacing:2px;line-height:1.2}
+#cld{font-size:8px;letter-spacing:1px;color:var(--t3);text-transform:uppercase}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--grn);flex-shrink:0;transition:background .3s}
 .sdot.saving{background:var(--amb);animation:bl .5s infinite}
 .sdot.err{background:var(--red)}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
 
-/* ── BOTTOM NAV ── */
-#nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav);background:var(--bg2);border-top:1px solid var(--b);display:flex;align-items:stretch;z-index:200}
-.nb2{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--t3);border:none;background:0;transition:color .15s;padding:4px 0}
-.nb2.on{color:var(--gold)}
-.nb2 svg{width:18px;height:18px;stroke-width:1.5}
-.nb2 span{font-size:8px;letter-spacing:1px;text-transform:uppercase}
+/* DRAWER */
+#dov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:400;display:none;backdrop-filter:blur(2px)}
+#dov.open{display:block}
+#drawer{position:fixed;top:0;left:-280px;width:280px;height:100vh;background:var(--bg2);border-right:1px solid var(--b);z-index:500;transition:left .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+#drawer.open{left:0}
+.d-head{padding:22px 20px 14px;border-bottom:1px solid var(--b)}
+.d-logo{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--gold);letter-spacing:6px;margin-bottom:1px}
+.d-sub{font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase}
+.d-nav{flex:1;overflow-y:auto;padding:8px 0}
+.ditem{display:flex;align-items:center;gap:13px;padding:12px 20px;cursor:pointer;color:var(--t2);border-left:3px solid transparent;transition:all .15s}
+.ditem:active{background:var(--bg3)}
+.ditem.on{color:var(--gold);border-left-color:var(--gold);background:var(--gdim)}
+.ditem svg{width:17px;height:17px;stroke-width:1.5;flex-shrink:0}
+.ditem span{font-size:11px;letter-spacing:2px;text-transform:uppercase}
+.d-sep{height:1px;background:var(--b);margin:6px 20px}
+.d-foot{padding:14px 20px;border-top:1px solid var(--b)}
+.d-code-lbl{font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:3px}
+.d-code-val{font-size:13px;letter-spacing:3px;color:var(--gold);cursor:pointer}
+.d-code-hint{font-size:8px;color:var(--t3);margin-top:2px;cursor:pointer;text-decoration:underline}
 
-/* ── VIEWS ── */
+/* CONTENT */
+#content{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0}
 .view{display:none;flex-direction:column;flex:1;overflow:hidden;min-height:0}
 .view.on{display:flex}
 
-/* ══ CALENDAR ══ */
-/* Today strip */
+/* CALENDAR */
 .tstrip{display:flex;align-items:center;gap:12px;padding:6px 14px 5px;border-bottom:1px solid var(--b);flex-shrink:0}
 .tnum{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;line-height:1;color:var(--gold)}
 .tday{font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;line-height:1.2}
-.tmyr{font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-top:2px}
-
-/* Month nav */
+.tmyr{font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-top:1px}
 .mnav{display:flex;align-items:center;justify-content:space-between;padding:4px 12px;flex-shrink:0}
 .mtitle{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;letter-spacing:2px}
 .myr{color:var(--gold)}
 .mbn{width:26px;height:26px;border-radius:50%;border:1px solid var(--b);background:0;color:var(--t2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
 .mbn:active{border-color:var(--gold);color:var(--gold)}
-
-/* Grid */
 .cwds{display:grid;grid-template-columns:repeat(7,1fr);padding:0 6px;flex-shrink:0}
 .cwd{text-align:center;font-size:8px;letter-spacing:1px;color:var(--t3);text-transform:uppercase;padding:1px 0}
-/* Fixed 6-row calendar */
-.cgrid{display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(6,1fr);padding:2px 6px;flex-shrink:0;height:192px}
+.cgrid{display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(6,1fr);padding:2px 6px;flex-shrink:0;height:186px}
 .cell{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;gap:1px}
 .cell:active{background:var(--bg3)}
 .cell.today{background:var(--gdim)}.cell.today .dn{color:var(--gold)}
@@ -105,15 +123,13 @@ header{height:var(--hdr);display:flex;align-items:center;padding:0 14px;border-b
 .cdot{width:3px;height:3px;border-radius:50%}
 .cdot.high{background:var(--red)}.cdot.medium{background:var(--amb)}.cdot.low{background:var(--grn)}
 .cell.sel .cdot{opacity:.5}
-
-/* Day panel — always visible, scrollable */
 #dp{flex:1;display:flex;flex-direction:column;overflow:hidden;border-top:1px solid var(--b)}
-.dphead{display:flex;align-items:center;justify-content:space-between;padding:8px 14px 6px;flex-shrink:0}
+.dphead{display:flex;align-items:center;justify-content:space-between;padding:7px 14px 5px;flex-shrink:0}
 .dptitle{font-family:'Cormorant Garamond',serif;font-size:14px;letter-spacing:1px}
 .dpcnt{font-size:8px;color:var(--gold);background:var(--gdim);padding:2px 8px;border-radius:20px;letter-spacing:2px}
 #elist{flex:1;overflow-y:auto;padding:0 10px 10px}
 
-/* ══ ENTRY CARDS ══ */
+/* ENTRY CARDS */
 .ecard{background:var(--bg3);border:1px solid var(--b);border-radius:9px;padding:9px 11px 9px 14px;margin-bottom:7px;cursor:pointer;display:flex;gap:9px;align-items:flex-start;position:relative;overflow:hidden}
 .ecard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
 .ecard.high::before{background:var(--red)}.ecard.medium::before{background:var(--amb)}.ecard.low::before{background:var(--grn)}
@@ -131,14 +147,14 @@ header{height:var(--hdr);display:flex;align-items:center;padding:0 14px;border-b
 .empty-s .ei{font-size:28px;margin-bottom:7px;opacity:.4}
 .empty-s .et{font-size:9px;letter-spacing:2px;text-transform:uppercase;text-align:center}
 
-/* ══ SEARCH ══ */
+/* SEARCH */
 .sbar{padding:10px 12px;border-bottom:1px solid var(--b);flex-shrink:0;display:flex;gap:8px;align-items:center}
 .sinput{flex:1;background:var(--bg3);border:1px solid var(--b);border-radius:9px;padding:9px 13px;color:var(--tx);font-size:12px;outline:none;-webkit-appearance:none}
 .sinput:focus{border-color:var(--gold)}
 .sclr{background:0;border:none;color:var(--t3);font-size:16px;cursor:pointer;padding:3px 5px}
 .sres{flex:1;overflow-y:auto;padding:10px}
 
-/* ══ REPORT ══ */
+/* REPORT */
 .rhdr{padding:10px 12px;border-bottom:1px solid var(--b);flex-shrink:0;display:flex;gap:10px;align-items:center}
 .rsel{background:var(--bg3);border:1px solid var(--b);border-radius:8px;padding:8px 11px;color:var(--tx);font-size:12px;outline:none;-webkit-appearance:none;flex:1}
 .rcontent{flex:1;overflow-y:auto;padding:10px}
@@ -150,7 +166,43 @@ header{height:var(--hdr);display:flex;align-items:center;padding:0 14px;border-b
 .rday{margin-bottom:12px}
 .rdlbl{font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:2px;color:var(--t2);padding:3px 0 7px;border-bottom:1px solid var(--b);margin-bottom:7px;text-transform:uppercase}
 
-/* ══ REMINDER ══ */
+/* FOLDERS */
+.folders-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--b);flex-shrink:0}
+.folders-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;letter-spacing:1px}
+.btn-nf{background:var(--gdim);border:1px solid var(--gold);color:var(--gold);border-radius:8px;padding:7px 13px;font-size:9px;letter-spacing:2px;text-transform:uppercase;cursor:pointer}
+.fgrid{flex:1;overflow-y:auto;padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start}
+.fcard{background:var(--bg3);border:1px solid var(--b);border-radius:11px;overflow:hidden;cursor:pointer}
+.fcard:active{border-color:var(--gold);opacity:.85}
+.fthumb{width:100%;height:88px;object-fit:cover;display:block;background:var(--bg2)}
+.fthumb-e{width:100%;height:88px;display:flex;align-items:center;justify-content:center;font-size:26px;background:var(--bg2);color:var(--t3)}
+.finfo{padding:8px 10px}
+.fname{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fcnt{font-size:9px;color:var(--t3);letter-spacing:1px;margin-top:1px}
+
+/* FOLDER DETAIL */
+#v-fd{display:none;flex-direction:column;flex:1;overflow:hidden;min-height:0}
+#v-fd.on{display:flex}
+.fd-head{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--b);flex-shrink:0}
+.fd-back{background:0;border:none;color:var(--gold);font-size:20px;cursor:pointer;padding:2px 6px}
+.fd-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;flex:1;letter-spacing:1px}
+.fd-add{background:var(--gdim);border:1px solid var(--gold);color:var(--gold);border-radius:8px;padding:7px 13px;font-size:9px;letter-spacing:2px;text-transform:uppercase;cursor:pointer}
+.fd-del{background:0;border:none;color:var(--t3);font-size:17px;cursor:pointer;padding:2px 6px}
+.fd-grid{flex:1;overflow-y:auto;padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start}
+.fi-card{border-radius:10px;overflow:hidden;cursor:pointer;position:relative;background:var(--bg3);border:1px solid var(--b)}
+.fi-card:active{opacity:.8}
+.fi-img{width:100%;height:108px;object-fit:cover;display:block}
+.fi-note-card{padding:11px;min-height:80px;display:flex;flex-direction:column;justify-content:space-between}
+.fi-note-txt{font-size:11px;color:var(--tx);line-height:1.6;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;flex:1}
+.fi-note-date{font-size:8px;color:var(--t3);letter-spacing:1px;margin-top:6px}
+.fi-del{position:absolute;top:5px;right:5px;width:22px;height:22px;border-radius:11px;background:rgba(0,0,0,.8);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;z-index:2}
+
+/* LIGHTBOX */
+#lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:9500;align-items:center;justify-content:center}
+#lb.open{display:flex}
+#lb img{max-width:95vw;max-height:90vh;object-fit:contain;border-radius:8px}
+#lb-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.12);border:none;color:#fff;width:36px;height:36px;border-radius:18px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* REMINDER */
 #remo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:800;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
 #remo.open{display:flex}
 #remd{background:var(--bg2);border:1px solid var(--b);border-radius:16px 16px 0 0;width:100%;max-width:600px;max-height:80vh;display:flex;flex-direction:column;padding:16px 14px 28px;animation:su .28s cubic-bezier(.4,0,.2,1)}
@@ -166,17 +218,17 @@ header{height:var(--hdr);display:flex;align-items:center;padding:0 14px;border-b
 .remim{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
 .remd2{font-size:10px;color:var(--gold);letter-spacing:1px;font-weight:500}
 
-/* ══ ENTRY MODAL ══ */
-#moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:600;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
-#moverlay.open{display:flex}
-#mbox{background:var(--bg2);border:1px solid var(--b);border-radius:16px 16px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;padding:16px 14px 32px;animation:su .26s cubic-bezier(.4,0,.2,1)}
+/* MODALS */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:600;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+.mo.open{display:flex}
+.mbox{background:var(--bg2);border:1px solid var(--b);border-radius:16px 16px 0 0;width:100%;max-width:600px;max-height:93vh;overflow-y:auto;padding:16px 14px 34px;animation:su .26s cubic-bezier(.4,0,.2,1)}
 @keyframes su{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
 .mhandle{width:32px;height:3px;background:var(--b);border-radius:2px;margin:0 auto 16px}
 .mtitle{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;margin-bottom:14px;letter-spacing:1px}
 .fg{margin-bottom:11px}
 .fl{display:block;font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
-.fi,.fta{width:100%;background:var(--bg3);border:1px solid var(--b);border-radius:7px;padding:9px 11px;color:var(--tx);font-size:13px;outline:none;-webkit-appearance:none;transition:border-color .2s}
-.fi:focus,.fta:focus{border-color:var(--gold)}
+.fi2,.fta{width:100%;background:var(--bg3);border:1px solid var(--b);border-radius:7px;padding:9px 11px;color:var(--tx);font-size:13px;outline:none;-webkit-appearance:none;transition:border-color .2s}
+.fi2:focus,.fta:focus{border-color:var(--gold)}
 .fta{resize:none;height:66px;line-height:1.6}
 .frow{display:flex;gap:9px;margin-bottom:11px}
 .frow .fg{flex:1;margin:0}
@@ -188,128 +240,179 @@ header{height:var(--hdr);display:flex;align-items:center;padding:0 14px;border-b
 .izone{border:1px dashed var(--b);border-radius:7px;padding:12px;text-align:center;cursor:pointer;position:relative;overflow:hidden}
 .izone input{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:1}
 .iztxt{font-size:10px;color:var(--t3)}
-#ipr{width:100%;height:100px;object-fit:cover;border-radius:6px;display:none}
 .iprw{position:relative}
-#irm{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:10px;background:rgba(0,0,0,.8);border:none;color:#fff;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:11px;z-index:2}
-#ild{font-size:9px;color:var(--gold);margin-top:4px;display:none;letter-spacing:1px}
+.ipr-img{width:100%;height:100px;object-fit:cover;border-radius:6px;display:none}
+.irm-btn{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:10px;background:rgba(0,0,0,.8);border:none;color:#fff;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:11px;z-index:2}
+.ild{font-size:9px;color:var(--gold);margin-top:4px;display:none;letter-spacing:1px}
 .mact{display:flex;gap:8px;margin-top:14px}
 .bsave{flex:1;background:var(--gold);color:#0a0a0a;border:none;border-radius:7px;padding:12px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500}
 .bsave:disabled{opacity:.5}
 .bcancel{background:0;border:1px solid var(--b);color:var(--t2);border-radius:7px;padding:12px 14px;font-size:11px;letter-spacing:2px;cursor:pointer}
 .bdel{background:0;border:1px solid var(--red);color:var(--red);border-radius:7px;padding:12px 11px;font-size:11px;cursor:pointer}
-
-/* ══ CODE MODAL (settings) ══ */
-#codemodal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:700;align-items:center;justify-content:center;padding:20px}
-#codemodal.open{display:flex}
-.codebox{background:var(--bg2);border:1px solid var(--b);border-radius:14px;padding:22px 18px;width:100%;max-width:340px}
-.codebox h3{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;margin-bottom:4px}
-.codebox p{font-size:10px;color:var(--t2);line-height:1.7;margin-bottom:16px}
-.code-display{background:var(--bg3);border:1px solid var(--gold);border-radius:8px;padding:12px;text-align:center;font-size:18px;letter-spacing:4px;color:var(--gold);margin-bottom:10px;cursor:pointer;word-break:break-all}
-.code-copy-hint{font-size:9px;color:var(--t3);text-align:center;margin-bottom:16px;letter-spacing:1px}
-.code-sep{font-size:9px;color:var(--t3);text-align:center;letter-spacing:2px;text-transform:uppercase;margin:12px 0}
-.code-inp{width:100%;background:var(--bg3);border:1px solid var(--b);border-radius:7px;padding:10px 12px;color:var(--tx);font-size:14px;letter-spacing:3px;outline:none;-webkit-appearance:none;text-transform:uppercase;margin-bottom:10px}
-.code-inp:focus{border-color:var(--gold)}
-.code-btns{display:flex;gap:8px}
-.code-btn{flex:1;background:var(--gold);color:#0a0a0a;border:none;border-radius:7px;padding:11px;font-size:10px;letter-spacing:2px;cursor:pointer;font-weight:500;text-transform:uppercase}
-.code-btn2{background:0;border:1px solid var(--b);color:var(--t2);border-radius:7px;padding:11px 12px;font-size:10px;letter-spacing:2px;cursor:pointer}
+.type-row{display:flex;gap:9px;margin-bottom:14px}
+.type-btn{flex:1;padding:14px 8px;border-radius:10px;border:1px solid var(--b);background:var(--bg3);color:var(--t2);cursor:pointer;text-align:center;transition:all .2s}
+.type-btn.on{border-color:var(--gold);color:var(--gold);background:var(--gdim)}
+.type-btn .ti{font-size:22px;margin-bottom:4px}
+.type-btn .tl{font-size:9px;letter-spacing:2px;text-transform:uppercase}
 
 /* FAB */
-#fab{position:fixed;right:14px;bottom:calc(var(--nav) + 12px);width:48px;height:48px;border-radius:24px;background:var(--gold);color:#0a0a0a;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 18px rgba(201,168,76,.45);display:flex;align-items:center;justify-content:center;z-index:100;line-height:1}
+#fab{position:fixed;right:14px;bottom:20px;width:48px;height:48px;border-radius:24px;background:var(--gold);color:#0a0a0a;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 18px rgba(201,168,76,.45);display:flex;align-items:center;justify-content:center;z-index:100;line-height:1}
 #fab:active{transform:scale(.9)}
 
 /* TOAST */
-#toast{position:fixed;bottom:calc(var(--nav) + 8px);left:50%;transform:translateX(-50%) translateY(12px);background:var(--bg3);border:1px solid var(--b);color:var(--tx);font-size:10px;letter-spacing:.5px;padding:7px 14px;border-radius:14px;opacity:0;transition:all .22s;z-index:900;pointer-events:none;white-space:nowrap}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--bg3);border:1px solid var(--b);color:var(--tx);font-size:10px;padding:7px 14px;border-radius:14px;opacity:0;transition:all .22s;z-index:9600;pointer-events:none;white-space:nowrap}
 #toast.sh{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 
-<div id="LS"><div class="ll">FİLİST</div><div class="ls" id="lsub">yükleniyor...</div></div>
-
-<!-- CODE SETUP SCREEN -->
-<div id="setup">
-  <div class="setup-logo">FİLİST</div>
-  <div class="setup-sub">Kişisel Ajanda</div>
+<!-- STEP 1: SETUP (first time only) -->
+<div id="s-setup" class="screen">
+  <div class="logo-big">FİLİST</div>
+  <div class="logo-sub">Kişisel Ajanda</div>
   <div class="setup-card">
-    <div class="setup-label">Kişisel Kodunuzu Belirleyin</div>
-    <div class="setup-hint">Hatırlayabileceğiniz bir şey yazın.<br>İsim, doğum tarihi, kelime — ne olursa.<br><br>Telefon temizlense bile bu kod ile tüm kayıtlarınıza erişirsiniz.</div>
+    <div class="setup-label">Kişisel Kodunuz</div>
+    <div class="setup-hint">Hatırlayabileceğiniz bir şey yazın.<br>İsim, tarih, kelime — ne olursa.<br>Bu cihaza özel olacak.</div>
   </div>
-  <input class="setup-inp" id="setup-inp" type="text" placeholder="KODUNUZU YAZIN" maxlength="20" autocomplete="off" autocorrect="off" spellcheck="false">
-  <div class="setup-btns">
-    <button class="setup-btn" id="setup-new">Devam Et</button>
-  </div>
+  <div class="step-label">Kodunuz</div>
+  <input class="big-inp" id="s-code" type="text" placeholder="ÖRNEK: AHMET1990" maxlength="20" autocomplete="off" autocorrect="off" spellcheck="false">
+  <div class="step-label" style="margin-top:8px">Uygulama Şifresi (4 hane)</div>
+  <input class="big-inp pin-inp" id="s-pin1" type="tel" inputmode="numeric" placeholder="••••" maxlength="4">
+  <div class="step-label" style="margin-top:4px">Şifreyi Tekrarla</div>
+  <input class="big-inp pin-inp" id="s-pin2" type="tel" inputmode="numeric" placeholder="••••" maxlength="4">
+  <div class="err-txt" id="s-err"></div>
+  <button class="big-btn" id="s-setup-btn">Başla</button>
 </div>
+
+<!-- STEP 2: PIN LOCK (every launch) -->
+<div id="s-pin" class="screen">
+  <div class="logo-big">FİLİST</div>
+  <div class="logo-sub" id="pin-user-label">Hoş geldiniz</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-pad">
+    <button class="pin-key" onclick="pk(1)">1</button>
+    <button class="pin-key" onclick="pk(2)">2</button>
+    <button class="pin-key" onclick="pk(3)">3</button>
+    <button class="pin-key" onclick="pk(4)">4</button>
+    <button class="pin-key" onclick="pk(5)">5</button>
+    <button class="pin-key" onclick="pk(6)">6</button>
+    <button class="pin-key" onclick="pk(7)">7</button>
+    <button class="pin-key" onclick="pk(8)">8</button>
+    <button class="pin-key" onclick="pk(9)">9</button>
+    <button class="pin-key zero" onclick="pk(0)">0</button>
+    <button class="pin-key del" onclick="pdel()">⌫</button>
+  </div>
+  <div class="pin-hint" id="pin-hint">şifrenizi girin</div>
 </div>
 
 <!-- MAIN APP -->
 <div id="app">
   <header>
-    <div class="logo" id="logo-btn">Filist</div>
+    <div class="ham" id="ham"><span></span><span></span><span></span></div>
+    <div class="hlogo">Filist</div>
     <div class="hclk"><div id="clk">--:--:--</div><div id="cld">...</div></div>
-    <div style="flex:1;display:flex;justify-content:flex-end;align-items:center;gap:8px">
-      <div class="sdot" id="sdot"></div>
-    </div>
+    <div class="sdot" id="sdot"></div>
   </header>
+  <div id="content">
 
-  <!-- CALENDAR VIEW -->
-  <div class="view on" id="v-cal">
-    <div class="tstrip">
-      <div class="tnum" id="tnum">--</div>
-      <div><div class="tday" id="tday">--</div><div class="tmyr" id="tmyr">-- ----</div></div>
-    </div>
-    <div class="mnav">
-      <button class="mbn" id="bprev">‹</button>
-      <div class="mtitle"><span id="cmn">--</span><span class="myr" id="cyr"> ----</span></div>
-      <button class="mbn" id="bnext">›</button>
-    </div>
-    <div class="cwds">
-      <div class="cwd">Pt</div><div class="cwd">Sa</div><div class="cwd">Ça</div>
-      <div class="cwd">Pe</div><div class="cwd">Cu</div><div class="cwd">Ct</div><div class="cwd">Pz</div>
-    </div>
-    <div class="cgrid" id="cgrid"></div>
-    <!-- Day panel always visible -->
-    <div id="dp">
-      <div class="dphead">
-        <div class="dptitle" id="dptitle">Bugün</div>
-        <span class="dpcnt" id="dpcnt" style="display:none"></span>
+    <!-- CALENDAR -->
+    <div class="view on" id="v-cal">
+      <div class="tstrip">
+        <div class="tnum" id="tnum">--</div>
+        <div><div class="tday" id="tday">--</div><div class="tmyr" id="tmyr">-- ----</div></div>
       </div>
-      <div id="elist"></div>
+      <div class="mnav">
+        <button class="mbn" id="bprev">‹</button>
+        <div class="mtitle"><span id="cmn">--</span><span class="myr" id="cyr"> ----</span></div>
+        <button class="mbn" id="bnext">›</button>
+      </div>
+      <div class="cwds">
+        <div class="cwd">Pt</div><div class="cwd">Sa</div><div class="cwd">Ça</div>
+        <div class="cwd">Pe</div><div class="cwd">Cu</div><div class="cwd">Ct</div><div class="cwd">Pz</div>
+      </div>
+      <div class="cgrid" id="cgrid"></div>
+      <div id="dp">
+        <div class="dphead">
+          <div class="dptitle" id="dptitle">Bugün</div>
+          <span class="dpcnt" id="dpcnt" style="display:none"></span>
+        </div>
+        <div id="elist"></div>
+      </div>
     </div>
-  </div>
 
-  <!-- SEARCH VIEW -->
-  <div class="view" id="v-search">
-    <div class="sbar">
-      <input class="sinput" id="sinput" type="search" placeholder="Başlık veya not ile ara...">
-      <button class="sclr" id="sclr">✕</button>
+    <!-- SEARCH -->
+    <div class="view" id="v-search">
+      <div class="sbar">
+        <input class="sinput" id="sinput" type="search" placeholder="Başlık veya not ile ara...">
+        <button class="sclr" id="sclr">✕</button>
+      </div>
+      <div class="sres" id="sres">
+        <div class="empty-s" style="padding-top:48px"><div class="ei">🔍</div><div class="et">Tüm kayıtlarda arama yapın</div></div>
+      </div>
     </div>
-    <div class="sres" id="sres">
-      <div class="empty-s" style="padding-top:48px"><div class="ei">🔍</div><div class="et">Tüm kayıtlarda<br>arama yapın</div></div>
-    </div>
-  </div>
 
-  <!-- REPORT VIEW -->
-  <div class="view" id="v-report">
-    <div class="rhdr"><select class="rsel" id="rsel"></select></div>
-    <div class="rcontent" id="rcontent"><div class="empty-s"><div class="ei">📊</div><div class="et">Ay seçin</div></div></div>
+    <!-- REPORT -->
+    <div class="view" id="v-report">
+      <div class="rhdr"><select class="rsel" id="rsel"></select></div>
+      <div class="rcontent" id="rcontent"></div>
+    </div>
+
+    <!-- FOLDERS -->
+    <div class="view" id="v-folders">
+      <div class="folders-head">
+        <div class="folders-title">Klasörler</div>
+        <button class="btn-nf" id="btn-nf">+ Yeni Klasör</button>
+      </div>
+      <div class="fgrid" id="fgrid"></div>
+    </div>
+
+    <!-- FOLDER DETAIL -->
+    <div id="v-fd">
+      <div class="fd-head">
+        <button class="fd-back" id="fd-back">‹</button>
+        <div class="fd-title" id="fd-title">Klasör</div>
+        <button class="fd-add" id="fd-add">+ Ekle</button>
+        <button class="fd-del" id="fd-del">🗑</button>
+      </div>
+      <div class="fd-grid" id="fd-grid"></div>
+    </div>
+
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
-<nav id="nav">
-  <button class="nb2 on" id="nv-cal" onclick="sv('cal')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
-    <span>Takvim</span>
-  </button>
-  <button class="nb2" id="nv-search" onclick="sv('search')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <span>Ara</span>
-  </button>
-  <button class="nb2" id="nv-report" onclick="sv('report')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 17H5a2 2 0 00-2 2v0a2 2 0 002 2h14a2 2 0 002-2v0a2 2 0 00-2-2h-4"/><path d="M12 3v14"/><path d="M9 6l3-3 3 3"/></svg>
-    <span>Rapor</span>
-  </button>
-</nav>
+<!-- DRAWER -->
+<div id="dov" onclick="cDrawer()"></div>
+<div id="drawer">
+  <div class="d-head">
+    <div class="d-logo">FİLİST</div>
+    <div class="d-sub">Kişisel Ajanda</div>
+  </div>
+  <div class="d-nav">
+    <div class="ditem on" id="dn-cal" onclick="sv('cal')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg><span>Takvim</span>
+    </div>
+    <div class="ditem" id="dn-search" onclick="sv('search')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Arama</span>
+    </div>
+    <div class="ditem" id="dn-report" onclick="sv('report')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 17H5a2 2 0 00-2 2v0a2 2 0 002 2h14a2 2 0 002-2v0a2 2 0 00-2-2h-4"/><path d="M12 3v14"/><path d="M9 6l3-3 3 3"/></svg><span>Rapor</span>
+    </div>
+    <div class="d-sep"></div>
+    <div class="ditem" id="dn-folders" onclick="sv('folders')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg><span>Klasörler</span>
+    </div>
+  </div>
+  <div class="d-foot">
+    <div class="d-code-lbl">Kişisel Kodunuz</div>
+    <div class="d-code-val" id="d-code-val" onclick="copyCode()">----</div>
+    <div class="d-code-hint" onclick="showChangePinModal()">Şifreyi değiştir</div>
+  </div>
+</div>
 
 <button id="fab">+</button>
 
@@ -324,47 +427,29 @@ header{height:var(--hdr);display:flex;align-items:center;padding:0 14px;border-b
   </div>
 </div>
 
-<!-- CODE MODAL (settings) -->
-<div id="codemodal">
-  <div class="codebox">
-    <h3>Kişisel Kodunuz</h3>
-    <p>Bu kodu not edin. Telefon temizlense bile bu kod ile tüm kayıtlarınıza erişirsiniz.</p>
-    <div class="code-display" id="code-display" onclick="copyCode()">----</div>
-    <div class="code-copy-hint">Koda tıklayarak kopyalayın</div>
-    <div class="code-sep">─ Farklı kod ile aç ─</div>
-    <input class="code-inp" id="code-inp" type="text" placeholder="YENİ KOD" maxlength="8">
-    <div class="code-btns">
-      <button class="code-btn2" onclick="closeCodeModal()">Kapat</button>
-      <button class="code-btn" onclick="switchCode()">Değiştir</button>
-    </div>
-  </div>
-</div>
-
 <!-- ENTRY MODAL -->
-<div id="moverlay">
-  <div id="mbox">
+<div class="mo" id="emo">
+  <div class="mbox">
     <div class="mhandle"></div>
     <div class="mtitle" id="mtitle">Yeni Kayıt</div>
-    <div class="fg"><label class="fl">Başlık *</label><input class="fi" type="text" id="ftit" placeholder="Kayıt başlığı..."></div>
+    <div class="fg"><label class="fl">Başlık *</label><input class="fi2" type="text" id="ftit" placeholder="Kayıt başlığı..."></div>
     <div class="fg"><label class="fl">Not</label><textarea class="fta" id="fnot" placeholder="Detaylar..."></textarea></div>
     <div class="frow">
-      <div class="fg"><label class="fl">Tarih</label><input class="fi" type="date" id="fdat"></div>
-      <div class="fg"><label class="fl">Saat</label><input class="fi" type="time" id="ftim"></div>
+      <div class="fg"><label class="fl">Tarih</label><input class="fi2" type="date" id="fdat"></div>
+      <div class="fg"><label class="fl">Saat</label><input class="fi2" type="time" id="ftim"></div>
     </div>
-    <div class="fg">
-      <label class="fl">Öncelik</label>
+    <div class="fg"><label class="fl">Öncelik</label>
       <div class="prow">
         <button class="pbtn" data-p="high" type="button">Yüksek</button>
         <button class="pbtn on" data-p="medium" type="button">Orta</button>
         <button class="pbtn" data-p="low" type="button">Düşük</button>
       </div>
     </div>
-    <div class="fg">
-      <label class="fl">Resim (isteğe bağlı)</label>
+    <div class="fg"><label class="fl">Resim (isteğe bağlı)</label>
       <div class="izone"><input type="file" id="fimg" accept="image/*">
-        <div class="iprw"><img id="ipr" alt=""><button id="irm" type="button">✕</button></div>
+        <div class="iprw"><img class="ipr-img" id="ipr" alt=""><button class="irm-btn" id="irm" type="button">✕</button></div>
         <div class="iztxt" id="iztxt">📷 Resim seç veya çek</div>
-        <div id="ild">⏳ Yükleniyor...</div>
+        <div class="ild" id="ild">⏳ Yükleniyor...</div>
       </div>
     </div>
     <div class="mact">
@@ -374,6 +459,64 @@ header{height:var(--hdr);display:flex;align-items:center;padding:0 14px;border-b
     </div>
   </div>
 </div>
+
+<!-- NEW FOLDER MODAL -->
+<div class="mo" id="fmo">
+  <div class="mbox">
+    <div class="mhandle"></div>
+    <div class="mtitle">Yeni Klasör</div>
+    <div class="fg"><label class="fl">Klasör Adı *</label><input class="fi2" type="text" id="fnm" placeholder="Klasör adı..."></div>
+    <div class="mact">
+      <button class="bcancel" onclick="cFmo()">İptal</button>
+      <button class="bsave" id="fsav">Oluştur</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOLDER ITEM MODAL -->
+<div class="mo" id="fimo">
+  <div class="mbox">
+    <div class="mhandle"></div>
+    <div class="mtitle">İçerik Ekle</div>
+    <div class="type-row">
+      <div class="type-btn on" id="tp-photo" onclick="selType('photo')"><div class="ti">📷</div><div class="tl">Fotoğraf</div></div>
+      <div class="type-btn" id="tp-note" onclick="selType('note')"><div class="ti">📝</div><div class="tl">Not</div></div>
+    </div>
+    <div id="fi-photo">
+      <div class="fg"><div class="izone"><input type="file" id="fi-img-inp" accept="image/*">
+        <div class="iprw"><img class="ipr-img" id="fi-ipr" alt=""><button class="irm-btn" id="fi-irm" type="button">✕</button></div>
+        <div class="iztxt" id="fi-iztxt">📷 Fotoğraf seç</div>
+        <div class="ild" id="fi-ild">⏳ Yükleniyor...</div>
+      </div></div>
+    </div>
+    <div id="fi-note" style="display:none">
+      <div class="fg"><label class="fl">Not</label><textarea class="fta" id="fi-note-inp" placeholder="Notunuzu yazın..." style="height:120px"></textarea></div>
+    </div>
+    <div class="mact">
+      <button class="bcancel" onclick="cFimo()">İptal</button>
+      <button class="bsave" id="fi-sav">Ekle</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE PIN MODAL -->
+<div class="mo" id="cpm">
+  <div class="mbox">
+    <div class="mhandle"></div>
+    <div class="mtitle">Şifre Değiştir</div>
+    <div class="fg"><label class="fl">Mevcut Şifre</label><input class="fi2 pin-inp" type="tel" inputmode="numeric" id="cp-old" placeholder="••••" maxlength="4"></div>
+    <div class="fg"><label class="fl">Yeni Şifre</label><input class="fi2 pin-inp" type="tel" inputmode="numeric" id="cp-new" placeholder="••••" maxlength="4"></div>
+    <div class="fg"><label class="fl">Yeni Şifre Tekrar</label><input class="fi2 pin-inp" type="tel" inputmode="numeric" id="cp-new2" placeholder="••••" maxlength="4"></div>
+    <div class="err-txt" id="cp-err"></div>
+    <div class="mact">
+      <button class="bcancel" onclick="cCpm()">İptal</button>
+      <button class="bsave" id="cp-sav">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lb"><img id="lb-img" alt=""><button id="lb-close" onclick="cLb()">✕</button></div>
 
 <div id="toast"></div>
 
@@ -387,52 +530,32 @@ const TRD=['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Paza
 const TRS=['Pt','Sa','Ça','Pe','Cu','Ct','Pz'];
 const PO={high:0,medium:1,low:2};
 
-// ── FIREBASE ───────────────────────────────────────────
+// ── FIREBASE ──────────────────────────────────────────
 firebase.initializeApp({apiKey:"AIzaSyDgF7iMi183LI1RkHnT0ZyAJAx_8ME4oLY",authDomain:"filist-83f78.firebaseapp.com",projectId:"filist-83f78",storageBucket:"filist-83f78.firebasestorage.app",messagingSenderId:"718317516714",appId:"1:718317516714:web:4dc1b822230538066cddd3"});
 const db=firebase.firestore();
 db.enablePersistence({synchronizeTabs:false}).catch(()=>{});
 
-// ── USER CODE SYSTEM ───────────────────────────────────
-// Code = 6-char alphanumeric, stored in localStorage
-// Firestore path: spaces/{code}/entries/{id}
-// User writes down code → can always restore data
-function genCode(){return Math.random().toString(36).slice(2,8).toUpperCase()}
-function getCode(){return localStorage.getItem('filist_code')}
-function setCode(c){localStorage.setItem('filist_code',c.toUpperCase())}
-function eRef(code){return db.collection('spaces').doc(code||getCode()).collection('entries')}
+// ── STORAGE KEYS ──────────────────────────────────────
+const SK={code:'fl_code',pin:'fl_pin'};
+function gc(){return localStorage.getItem(SK.code)}
+function gp(){return localStorage.getItem(SK.pin)}
+function sc(v){localStorage.setItem(SK.code,v.trim().toUpperCase())}
+function sp(v){localStorage.setItem(SK.pin,v)}
 
-// ── SETUP SCREEN ───────────────────────────────────────
-const existingCode=getCode();
-if(!existingCode){
-  document.getElementById('setup').classList.add('show');
-  document.getElementById('LS').classList.add('hide');
-  setTimeout(()=>document.getElementById('LS').style.display='none',500);
-
-  document.getElementById('setup-new').onclick=()=>{
-    const inp=document.getElementById('setup-inp').value.trim().toUpperCase();
-    if(inp.length<2){
-      document.getElementById('setup-inp').style.borderColor='var(--red)';
-      document.getElementById('setup-inp').placeholder='EN AZ 2 KARAKTER GİRİN';
-      return;
-    }
-    setCode(inp);
-    document.getElementById('setup').classList.remove('show');
-    initApp();
-  };
-  // Allow Enter key
-  document.getElementById('setup-inp').addEventListener('keydown',e=>{
-    if(e.key==='Enter') document.getElementById('setup-new').click();
-  });
-} else {
-  initApp();
+// ── HASH (PIN) ────────────────────────────────────────
+async function hash(s){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
-// ── STATE ──────────────────────────────────────────────
-const NOW=new Date();
-let vY=NOW.getFullYear(),vM=NOW.getMonth(),selD=fmt(NOW);
-let all={},editId=null,selP='medium',imgF=null,exImg=null,loaded=false;
+// ── REFS ──────────────────────────────────────────────
+const eRef=()=>db.collection('spaces').doc(gc()).collection('entries');
+const fRef=()=>db.collection('spaces').doc(gc()).collection('folders');
+const fiRef=fid=>db.collection('spaces').doc(gc()).collection('folders').doc(fid).collection('items');
 
+// ── HELPERS ───────────────────────────────────────────
 const $=id=>document.getElementById(id);
+const NOW=new Date();
 function fmt(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
 function pdt(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
 function p2(n){return String(n).padStart(2,'0')}
@@ -441,6 +564,112 @@ function plb(p){return p==='high'?'Yüksek':p==='low'?'Düşük':'Orta'}
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('sh');setTimeout(()=>t.classList.remove('sh'),2800)}
 function ss(s){$('sdot').className='sdot'+(s==='saving'?' saving':s==='err'?' err':'')}
 function daysFrom(ds){return Math.round((pdt(ds)-new Date(NOW.getFullYear(),NOW.getMonth(),NOW.getDate()))/864e5)}
+
+// ── BOOT ──────────────────────────────────────────────
+(async function boot(){
+  const code=gc(),pin=gp();
+  if(!code||!pin){
+    // First time — show setup
+    $('s-setup').classList.add('show');
+    setupListeners();
+  } else {
+    // Show PIN lock
+    $('pin-user-label').textContent=code;
+    $('s-pin').classList.add('show');
+    pinListeners();
+  }
+})();
+
+// ── SETUP LISTENERS ───────────────────────────────────
+function setupListeners(){
+  $('s-setup-btn').onclick=async()=>{
+    const code=$('s-code').value.trim();
+    const pin1=$('s-pin1').value.trim();
+    const pin2=$('s-pin2').value.trim();
+    if(code.length<2){$('s-err').textContent='Kod en az 2 karakter olmalı';return}
+    if(pin1.length<4){$('s-err').textContent='Şifre 4 hane olmalı';return}
+    if(pin1!==pin2){$('s-err').textContent='Şifreler eşleşmiyor';return}
+    $('s-err').textContent='';
+    sc(code);
+    sp(await hash(pin1));
+    $('s-setup').classList.remove('show');
+    launchApp();
+  };
+  [$('s-pin1'),$('s-pin2')].forEach(el=>{
+    el.addEventListener('input',()=>{el.value=el.value.replace(/\D/g,'').slice(0,4)});
+  });
+  $('s-code').addEventListener('keydown',e=>{if(e.key==='Enter')$('s-pin1').focus()});
+}
+
+// ── PIN LOCK ──────────────────────────────────────────
+let pinEntered='';
+function pinListeners(){
+  $('pin-hint').textContent='şifrenizi girin';
+  renderPinDots();
+}
+function pk(n){
+  if(pinEntered.length>=4)return;
+  pinEntered+=String(n);
+  renderPinDots();
+  if(pinEntered.length===4) verifyPin();
+}
+function pdel(){
+  pinEntered=pinEntered.slice(0,-1);
+  renderPinDots();
+  $('pin-hint').textContent='şifrenizi girin';
+  for(let i=0;i<4;i++){$('pd'+i).classList.remove('err')}
+}
+function renderPinDots(){
+  for(let i=0;i<4;i++){$('pd'+i).classList.toggle('filled',i<pinEntered.length)}
+}
+async function verifyPin(){
+  const h=await hash(pinEntered);
+  if(h===gp()){
+    $('s-pin').classList.remove('show');
+    launchApp();
+  } else {
+    for(let i=0;i<4;i++){$('pd'+i).classList.add('err')}
+    $('pin-hint').textContent='yanlış şifre — tekrar deneyin';
+    setTimeout(()=>{
+      pinEntered='';
+      for(let i=0;i<4;i++){$('pd'+i).classList.remove('err',$('pd'+i).classList.remove('filled'))}
+      renderPinDots();
+    },800);
+  }
+}
+
+// ── CHANGE PIN ────────────────────────────────────────
+function showChangePinModal(){cDrawer();$('cp-old').value='';$('cp-new').value='';$('cp-new2').value='';$('cp-err').textContent='';$('cpm').classList.add('open')}
+function cCpm(){$('cpm').classList.remove('open')}
+$('cp-sav').onclick=async()=>{
+  const oldP=$('cp-old').value.trim(),newP=$('cp-new').value.trim(),newP2=$('cp-new2').value.trim();
+  if(oldP.length<4||newP.length<4){$('cp-err').textContent='Şifre 4 hane olmalı';return}
+  if(newP!==newP2){$('cp-err').textContent='Yeni şifreler eşleşmiyor';return}
+  const h=await hash(oldP);
+  if(h!==gp()){$('cp-err').textContent='Mevcut şifre yanlış';return}
+  sp(await hash(newP));
+  cCpm();toast('Şifre değiştirildi ✓');
+};
+
+// ── LAUNCH APP ────────────────────────────────────────
+let all={},editId=null,selP='medium',imgF=null,exImg=null;
+let vY=NOW.getFullYear(),vM=NOW.getMonth();
+let selD=fmt(NOW); // ALWAYS starts on today
+let curFolderId=null,fiType='photo',fiImgF=null,loaded=false;
+
+function launchApp(){
+  $('d-code-val').textContent=gc()||'----';
+  $('app').classList.add('show');
+  tick();
+
+  eRef().onSnapshot(snap=>{
+    all={};
+    snap.forEach(doc=>{const d={id:doc.id,...doc.data()};if(!all[d.date])all[d.date]=[];all[d.date].push(d)});
+    Object.values(all).forEach(a=>a.sort((x,y)=>PO[x.p||'medium']-PO[y.p||'medium']));
+    renderCal();renderDP(selD);ss('ok');
+    if(!loaded){loaded=true;showReminder();}
+  },err=>{ss('err');if(!loaded){loaded=true;toast('Çevrimdışı mod')}});
+}
 
 // ── CLOCK ──────────────────────────────────────────────
 function tick(){
@@ -452,81 +681,41 @@ function tick(){
   $('tnum').textContent=p2(NOW.getDate());$('tday').textContent=TRD[ti];
   $('tmyr').textContent=TRM[NOW.getMonth()]+' '+NOW.getFullYear();
 }
-setInterval(tick,1000);tick();
+setInterval(tick,1000);
 
-// ── VIEW SWITCH ─────────────────────────────────────
+// ── DRAWER ────────────────────────────────────────────
+$('ham').onclick=()=>{$('drawer').classList.add('open');$('dov').classList.add('open')};
+function cDrawer(){$('drawer').classList.remove('open');$('dov').classList.remove('open')}
+function copyCode(){const c=gc();if(!c)return;if(navigator.clipboard){navigator.clipboard.writeText(c).then(()=>toast('Kopyalandı: '+c)).catch(()=>toast('Kodunuz: '+c));}else toast('Kodunuz: '+c)}
+
+// ── VIEW SWITCH ───────────────────────────────────────
 function sv(v){
-  ['cal','search','report'].forEach(x=>{$('v-'+x).classList.toggle('on',x===v);$('nv-'+x).classList.toggle('on',x===v)});
+  cDrawer();
+  $('v-fd').classList.remove('on');
+  ['cal','search','report','folders'].forEach(x=>{
+    const el=$('v-'+x);if(el)el.classList.toggle('on',x===v);
+    const dn=$('dn-'+x);if(dn)dn.classList.toggle('on',x===v);
+  });
   $('fab').style.display=v==='cal'?'flex':'none';
   if(v==='report')renderReport();
   if(v==='search')setTimeout(()=>$('sinput').focus(),200);
+  if(v==='folders')renderFolders();
+  // Reset to today when switching to calendar
+  if(v==='cal'){selD=fmt(NOW);vY=NOW.getFullYear();vM=NOW.getMonth();renderCal();renderDP(selD);}
 }
 
-// ── CODE MODAL ─────────────────────────────────────────
-$('logo-btn').onclick=()=>{
-  $('code-display').textContent=getCode()||'----';
-  $('code-inp').value='';
-  $('codemodal').classList.add('open');
-};
-function closeCodeModal(){$('codemodal').classList.remove('open')}
-function copyCode(){
-  const code=getCode();
-  if(!code)return;
-  navigator.clipboard&&navigator.clipboard.writeText(code).then(()=>toast('Kod kopyalandı: '+code)).catch(()=>toast('Kodunuz: '+code));
-  if(!navigator.clipboard)toast('Kodunuz: '+code);
-}
-function switchCode(){
-  const inp=$('code-inp').value.trim().toUpperCase();
-  if(inp.length<4){toast('En az 4 karakter girin');return;}
-  if(!confirm(inp+' koduna geçmek istiyor musunuz?\nBu kodla kayıtlı veriler yüklenecek.'))return;
-  setCode(inp);
-  closeCodeModal();
-  location.reload();
-}
-
-// ── MAIN INIT ──────────────────────────────────────────
-function initApp(){
-  // Firestore listener
-  eRef().onSnapshot(snap=>{
-    all={};
-    snap.forEach(doc=>{const d={id:doc.id,...doc.data()};if(!all[d.date])all[d.date]=[];all[d.date].push(d)});
-    Object.values(all).forEach(a=>a.sort((x,y)=>PO[x.p||'medium']-PO[y.p||'medium']));
-    renderCal();renderDP(selD);ss('ok');
-    if(!loaded){
-      loaded=true;
-      $('LS').classList.add('hide');
-      setTimeout(()=>$('LS').style.display='none',450);
-      // Show reminder EVERY TIME on open (user must close it)
-      showReminder();
-    }
-  },err=>{
-    ss('err');
-    if(!loaded){
-      loaded=true;
-      $('LS').classList.add('hide');
-      setTimeout(()=>$('LS').style.display='none',450);
-      toast('Çevrimdışı — önbellek yüklendi');
-      renderCal();renderDP(selD);
-    }
-  });
-}
-
-// ── REMINDER (every open, 20 days) ────────────────────
+// ── REMINDER ─────────────────────────────────────────
 function showReminder(){
   const up=[];
-  Object.entries(all).forEach(([ds,arr])=>{
-    const df=daysFrom(ds);
-    if(df>=0&&df<=20) arr.forEach(e=>up.push({...e,_ds:ds,_df:df}));
-  });
-  if(!up.length) return;
+  Object.entries(all).forEach(([ds,arr])=>{const df=daysFrom(ds);if(df>=0&&df<=20)arr.forEach(e=>up.push({...e,_ds:ds,_df:df}))});
+  if(!up.length)return;
   up.sort((a,b)=>PO[a.p||'medium']-PO[b.p||'medium']||a._df-b._df);
   const list=$('remlist');list.innerHTML='';
   up.forEach(e=>{
     const el=document.createElement('div');el.className='remi '+(e.p||'medium');
     const d=pdt(e._ds),di=(d.getDay()+6)%7;
     const dl=e._df===0?'Bugün':e._df===1?'Yarın':e._df+' gün sonra';
-    el.innerHTML=`<div class="remit">${esc(e.title||'Başlıksız')}</div>
-      <div class="remim"><span class="remd2">${dl}</span><span class="etime">${TRD[di]} ${d.getDate()} ${TRM[d.getMonth()]}${e.time?' · '+e.time:''}</span><span class="pb ${e.p||'medium'}">${plb(e.p)}</span></div>`;
+    el.innerHTML=`<div class="remit">${esc(e.title||'Başlıksız')}</div><div class="remim"><span class="remd2">${dl}</span><span class="etime">${TRD[di]} ${d.getDate()} ${TRM[d.getMonth()]}${e.time?' · '+e.time:''}</span><span class="pb ${e.p||'medium'}">${plb(e.p)}</span></div>`;
     el.onclick=()=>{closeRem();selD=e._ds;vY=pdt(e._ds).getFullYear();vM=pdt(e._ds).getMonth();sv('cal');renderCal();renderDP(e._ds)};
     list.appendChild(el);
   });
@@ -546,9 +735,9 @@ function renderCal(){
   const pd=new Date(vY,vM,0).getDate();
   const ts=fmt(NOW);
   let cells=[];
-  for(let i=fd-1;i>=0;i--) cells.push({d:pd-i,o:true,rm:vM-1,ry:vY});
-  for(let d=1;d<=dim;d++) cells.push({d,o:false,rm:vM,ry:vY});
-  while(cells.length<42) cells.push({d:cells.length-fd-dim+1,o:true,rm:vM+1,ry:vY});
+  for(let i=fd-1;i>=0;i--)cells.push({d:pd-i,o:true,rm:vM-1,ry:vY});
+  for(let d=1;d<=dim;d++)cells.push({d,o:false,rm:vM,ry:vY});
+  while(cells.length<42)cells.push({d:cells.length-fd-dim+1,o:true,rm:vM+1,ry:vY});
   cells.forEach(c=>{
     const rm=((c.rm%12)+12)%12,ry=c.rm<0?c.ry-1:c.rm>11?c.ry+1:c.ry;
     const ds=ry+'-'+p2(rm+1)+'-'+p2(c.d);
@@ -559,12 +748,10 @@ function renderCal(){
     const dn=document.createElement('div');dn.className='dn';dn.textContent=c.d;el.appendChild(dn);
     const de=all[ds]||[];
     if(de.length){const dv=document.createElement('div');dv.className='cdots';de.slice(0,3).forEach(e=>{const dot=document.createElement('div');dot.className='cdot '+(e.p||'medium');dv.appendChild(dot)});el.appendChild(dv);}
-    el.onclick=()=>pickDay(ds);
+    el.onclick=()=>{selD=ds;renderCal();renderDP(ds)};
     g.appendChild(el);
   });
 }
-
-function pickDay(ds){selD=ds;renderCal();renderDP(ds)}
 
 function renderDP(ds){
   const d=pdt(ds),di=(d.getDay()+6)%7;
@@ -573,7 +760,7 @@ function renderDP(ds){
   const cnt=$('dpcnt');
   if(de.length){cnt.textContent=de.length+' kayıt';cnt.style.display='inline';}else cnt.style.display='none';
   const el=$('elist');el.innerHTML='';
-  if(!de.length){el.innerHTML='<div class="empty-s"><div class="ei">📋</div><div class="et">Kayıt yok<br>+ ile ekle</div></div>';return;}
+  if(!de.length){el.innerHTML='<div class="empty-s"><div class="ei">📋</div><div class="et">Kayıt yok · + ile ekle</div></div>';return;}
   de.forEach(e=>el.appendChild(mkCard(e,false)));
 }
 
@@ -593,9 +780,8 @@ function mkCard(e,showDate){
 $('sinput').addEventListener('input',doSearch);
 $('sclr').onclick=()=>{$('sinput').value='';doSearch()};
 function doSearch(){
-  const q=$('sinput').value.trim().toLowerCase();
-  const res=$('sres');
-  if(!q){res.innerHTML='<div class="empty-s" style="padding-top:48px"><div class="ei">🔍</div><div class="et">Tüm kayıtlarda<br>arama yapın</div></div>';return;}
+  const q=$('sinput').value.trim().toLowerCase(),res=$('sres');
+  if(!q){res.innerHTML='<div class="empty-s" style="padding-top:48px"><div class="ei">🔍</div><div class="et">Tüm kayıtlarda arama yapın</div></div>';return;}
   const matches=[];
   Object.values(all).flat().forEach(e=>{if((e.title||'').toLowerCase().includes(q)||(e.note||'').toLowerCase().includes(q))matches.push(e)});
   matches.sort((a,b)=>b.date.localeCompare(a.date)||PO[a.p||'medium']-PO[b.p||'medium']);
@@ -606,7 +792,7 @@ function doSearch(){
 }
 
 // ── REPORT ────────────────────────────────────────────
-(function initRsel(){
+(function(){
   const sel=$('rsel');
   for(let i=11;i>=-3;i--){
     const d=new Date(NOW.getFullYear(),NOW.getMonth()-i,1);
@@ -618,11 +804,9 @@ function doSearch(){
   }
   sel.onchange=renderReport;
 })();
-
 function renderReport(){
   const val=$('rsel').value;if(!val)return;
-  const[ry,rm]=val.split('-').map(Number);
-  const prefix=ry+'-'+p2(rm);
+  const[ry,rm]=val.split('-').map(Number),prefix=ry+'-'+p2(rm);
   const rc=$('rcontent');rc.innerHTML='';
   const me=[];
   Object.entries(all).forEach(([ds,arr])=>{if(ds.startsWith(prefix))arr.forEach(e=>me.push({...e,_ds:ds}))});
@@ -641,17 +825,132 @@ function renderReport(){
   });
 }
 
+// ── FOLDERS ───────────────────────────────────────────
+function renderFolders(){
+  const g=$('fgrid');g.innerHTML='';
+  fRef().get().then(snap=>{
+    if(snap.empty){g.innerHTML='<div class="empty-s" style="grid-column:1/-1;padding-top:48px"><div class="ei">📁</div><div class="et">Klasör yok · Yeni Klasör butonuna bas</div></div>';return;}
+    snap.forEach(doc=>{const f={id:doc.id,...doc.data()};g.appendChild(mkFCard(f))});
+  }).catch(()=>toast('Klasörler yüklenemedi'));
+}
+function mkFCard(f){
+  const c=document.createElement('div');c.className='fcard';
+  c.innerHTML=(f.thumb?`<img class="fthumb" src="${esc(f.thumb)}" alt="" loading="lazy">`:`<div class="fthumb-e">📁</div>`)
+    +`<div class="finfo"><div class="fname">${esc(f.name)}</div><div class="fcnt">${f.count||0} öğe</div></div>`;
+  c.onclick=()=>openFolder(f.id,f.name);
+  return c;
+}
+$('btn-nf').onclick=()=>{$('fnm').value='';$('fmo').classList.add('open');setTimeout(()=>$('fnm').focus(),200)};
+function cFmo(){$('fmo').classList.remove('open')}
+$('fmo').onclick=e=>{if(e.target===$('fmo'))cFmo()};
+$('fsav').onclick=async()=>{
+  const n=$('fnm').value.trim();if(!n){toast('Klasör adı gerekli');return;}
+  ss('saving');await fRef().add({name:n,count:0,created:Date.now()});ss('ok');cFmo();renderFolders();toast('Klasör oluşturuldu ✓');
+};
+
+function openFolder(fid,fname){
+  curFolderId=fid;$('fd-title').textContent=fname;
+  ['cal','search','report','folders'].forEach(x=>{const el=$('v-'+x);if(el)el.classList.remove('on')});
+  $('v-fd').classList.add('on');$('fab').style.display='none';
+  renderFolderItems(fid);
+}
+$('fd-back').onclick=()=>{$('v-fd').classList.remove('on');sv('folders')};
+$('fd-del').onclick=async()=>{
+  if(!curFolderId||!confirm('Klasör ve tüm içeriği silinsin mi?'))return;
+  ss('saving');
+  const items=await fiRef(curFolderId).get();
+  const batch=db.batch();
+  items.forEach(doc=>batch.delete(doc.ref));
+  batch.delete(fRef().doc(curFolderId));
+  await batch.commit();ss('ok');$('v-fd').classList.remove('on');sv('folders');toast('Klasör silindi');
+};
+
+$('fd-add').onclick=()=>{
+  fiType='photo';fiImgF=null;selType('photo');
+  $('fi-note-inp').value='';$('fi-ipr').src='';
+  $('fi-ipr').style.display='none';$('fi-irm').style.display='none';
+  $('fi-iztxt').style.display='block';$('fi-ild').style.display='none';
+  $('fi-img-inp').value='';$('fimo').classList.add('open');
+};
+function cFimo(){$('fimo').classList.remove('open')}
+$('fimo').onclick=e=>{if(e.target===$('fimo'))cFimo()};
+function selType(t){
+  fiType=t;$('tp-photo').classList.toggle('on',t==='photo');$('tp-note').classList.toggle('on',t==='note');
+  $('fi-photo').style.display=t==='photo'?'block':'none';$('fi-note').style.display=t==='note'?'block':'none';
+}
+$('fi-img-inp').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;fiImgF=f;
+  const r=new FileReader();r.onload=ev=>{$('fi-ipr').src=ev.target.result;$('fi-ipr').style.display='block';$('fi-irm').style.display='flex';$('fi-iztxt').style.display='none'};r.readAsDataURL(f);
+};
+$('fi-irm').onclick=e=>{e.stopPropagation();fiImgF=null;$('fi-ipr').style.display='none';$('fi-irm').style.display='none';$('fi-iztxt').style.display='block';$('fi-img-inp').value=''};
+$('fi-sav').onclick=async()=>{
+  if(!curFolderId)return;
+  const btn=$('fi-sav');btn.disabled=true;btn.textContent='...';
+  try{
+    if(fiType==='photo'){
+      if(!fiImgF){toast('Fotoğraf seçin');btn.disabled=false;btn.textContent='Ekle';return;}
+      $('fi-ild').style.display='block';ss('saving');
+      const fd=new FormData();fd.append('image',fiImgF);
+      const r=await fetch(`https://api.imgbb.com/1/upload?key=${IK}`,{method:'POST',body:fd});
+      const j=await r.json();$('fi-ild').style.display='none';
+      if(!j.success){toast('Resim yüklenemedi');btn.disabled=false;btn.textContent='Ekle';return;}
+      await fiRef(curFolderId).add({type:'photo',img:j.data.url,created:Date.now()});
+      const snap=await fiRef(curFolderId).get();
+      await fRef().doc(curFolderId).update({thumb:j.data.url,count:snap.size});
+    } else {
+      const note=$('fi-note-inp').value.trim();if(!note){toast('Not boş olamaz');btn.disabled=false;btn.textContent='Ekle';return;}
+      await fiRef(curFolderId).add({type:'note',note,created:Date.now()});
+      const snap=await fiRef(curFolderId).get();
+      await fRef().doc(curFolderId).update({count:snap.size});
+    }
+    ss('ok');cFimo();renderFolderItems(curFolderId);toast('Eklendi ✓');
+  }catch(e){ss('err');toast('Hata: '+e.message);}
+  finally{btn.disabled=false;btn.textContent='Ekle';}
+};
+
+function renderFolderItems(fid){
+  const g=$('fd-grid');g.innerHTML='';
+  fiRef(fid).orderBy('created','desc').get().then(snap=>{
+    if(snap.empty){g.innerHTML='<div class="empty-s" style="grid-column:1/-1;padding-top:32px"><div class="ei">🖼️</div><div class="et">Henüz öğe yok · Ekle butonuna bas</div></div>';return;}
+    snap.forEach(doc=>g.appendChild(mkFiCard({id:doc.id,...doc.data()},fid)));
+  }).catch(()=>toast('Öğeler yüklenemedi'));
+}
+function mkFiCard(item,fid){
+  const c=document.createElement('div');c.className='fi-card';
+  if(item.type==='photo'){
+    c.innerHTML=`<img class="fi-img" src="${esc(item.img)}" alt="" loading="lazy"><button class="fi-del" data-id="${item.id}">✕</button>`;
+    c.querySelector('.fi-img').onclick=()=>oLb(item.img);
+  } else {
+    const d=new Date(item.created);
+    c.innerHTML=`<div class="fi-note-card"><div class="fi-note-txt">${esc(item.note)}</div><div class="fi-note-date">${d.getDate()+' '+TRM[d.getMonth()]+' '+d.getFullYear()}</div></div><button class="fi-del" data-id="${item.id}">✕</button>`;
+  }
+  c.querySelector('.fi-del').onclick=async e=>{
+    e.stopPropagation();if(!confirm('Silinsin mi?'))return;
+    await fiRef(fid).doc(item.id).delete();
+    const snap=await fiRef(fid).get();
+    let thumb=null;snap.forEach(d=>{if(d.data().type==='photo'&&!thumb)thumb=d.data().img});
+    await fRef().doc(fid).update({count:snap.size,thumb:thumb||firebase.firestore.FieldValue.delete()});
+    renderFolderItems(fid);toast('Silindi');
+  };
+  return c;
+}
+
+// ── LIGHTBOX ──────────────────────────────────────────
+function oLb(src){$('lb-img').src=src;$('lb').classList.add('open')}
+function cLb(){$('lb').classList.remove('open')}
+$('lb').onclick=e=>{if(e.target===$('lb'))cLb()}
+
 // ── ENTRY MODAL ───────────────────────────────────────
-$('fab').onclick=openAdd;$('bcan').onclick=closeModal;$('bsav').onclick=handleSave;$('bdel').onclick=handleDel;
-$('moverlay').onclick=e=>{if(e.target===$('moverlay'))closeModal()};
+$('fab').onclick=openAdd;$('bcan').onclick=cEmo;$('bsav').onclick=handleSave;$('bdel').onclick=handleDel;
+$('emo').onclick=e=>{if(e.target===$('emo'))cEmo()};
 document.querySelectorAll('.pbtn').forEach(b=>{b.onclick=()=>{selP=b.dataset.p;document.querySelectorAll('.pbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on')}});
 $('fimg').onchange=e=>{const f=e.target.files[0];if(!f)return;imgF=f;const r=new FileReader();r.onload=ev=>{$('ipr').src=ev.target.result;$('ipr').style.display='block';$('irm').style.display='flex';$('iztxt').style.display='none'};r.readAsDataURL(f)};
 $('irm').onclick=e=>{e.stopPropagation();imgF=null;exImg=null;$('ipr').style.display='none';$('irm').style.display='none';$('iztxt').style.display='block';$('fimg').value=''};
-function resetM(){imgF=null;exImg=null;$('ftit').value='';$('fnot').value='';$('fdat').value=selD||fmt(NOW);const n=new Date();$('ftim').value=p2(n.getHours())+':'+p2(n.getMinutes());selP='medium';document.querySelectorAll('.pbtn').forEach(b=>b.classList.toggle('on',b.dataset.p==='medium'));$('ipr').style.display='none';$('irm').style.display='none';$('iztxt').style.display='block';$('fimg').value='';$('ild').style.display='none'}
-function openAdd(){editId=null;resetM();$('mtitle').textContent='Yeni Kayıt';$('bdel').style.display='none';$('moverlay').classList.add('open');setTimeout(()=>$('ftit').focus(),280)}
-function openEdit(e,ds){editId=e.id;exImg=e.img||null;imgF=null;$('mtitle').textContent='Kaydı Düzenle';$('ftit').value=e.title||'';$('fnot').value=e.note||'';$('fdat').value=e.date||ds;$('ftim').value=e.time||'';selP=e.p||'medium';document.querySelectorAll('.pbtn').forEach(b=>b.classList.toggle('on',b.dataset.p===selP));if(e.img){$('ipr').src=e.img;$('ipr').style.display='block';$('irm').style.display='flex';$('iztxt').style.display='none';}else{$('ipr').style.display='none';$('irm').style.display='none';$('iztxt').style.display='block';}$('fimg').value='';$('ild').style.display='none';$('bdel').style.display='inline-block';$('moverlay').classList.add('open')}
-function closeModal(){$('moverlay').classList.remove('open');editId=null}
-async function handleDel(){if(!editId||!confirm('Silinsin mi?'))return;try{ss('saving');await eRef().doc(editId).delete();ss('ok');toast('Silindi');closeModal();}catch{ss('err');toast('Hata')}}
+function rM(){imgF=null;exImg=null;$('ftit').value='';$('fnot').value='';$('fdat').value=selD||fmt(NOW);const n=new Date();$('ftim').value=p2(n.getHours())+':'+p2(n.getMinutes());selP='medium';document.querySelectorAll('.pbtn').forEach(b=>b.classList.toggle('on',b.dataset.p==='medium'));$('ipr').style.display='none';$('irm').style.display='none';$('iztxt').style.display='block';$('fimg').value='';$('ild').style.display='none'}
+function openAdd(){editId=null;rM();$('mtitle').textContent='Yeni Kayıt';$('bdel').style.display='none';$('emo').classList.add('open');setTimeout(()=>$('ftit').focus(),280)}
+function openEdit(e,ds){editId=e.id;exImg=e.img||null;imgF=null;$('mtitle').textContent='Kaydı Düzenle';$('ftit').value=e.title||'';$('fnot').value=e.note||'';$('fdat').value=e.date||ds;$('ftim').value=e.time||'';selP=e.p||'medium';document.querySelectorAll('.pbtn').forEach(b=>b.classList.toggle('on',b.dataset.p===selP));if(e.img){$('ipr').src=e.img;$('ipr').style.display='block';$('irm').style.display='flex';$('iztxt').style.display='none';}else{$('ipr').style.display='none';$('irm').style.display='none';$('iztxt').style.display='block';}$('fimg').value='';$('ild').style.display='none';$('bdel').style.display='inline-block';$('emo').classList.add('open')}
+function cEmo(){$('emo').classList.remove('open');editId=null}
+async function handleDel(){if(!editId||!confirm('Silinsin mi?'))return;try{ss('saving');await eRef().doc(editId).delete();ss('ok');toast('Silindi');cEmo();}catch{ss('err');toast('Hata')}}
 async function handleSave(){
   const tit=$('ftit').value.trim();if(!tit){toast('Başlık boş olamaz');return;}
   const btn=$('bsav');btn.disabled=true;btn.textContent='...';
@@ -660,8 +959,11 @@ async function handleSave(){
   if(!imgF&&!exImg)iu=null;
   const date=$('fdat').value||fmt(NOW);
   const data={title:tit,note:$('fnot').value.trim(),date,time:$('ftim').value,p:selP,img:iu||null,upd:Date.now()};
-  try{ss('saving');if(editId)await eRef().doc(editId).set(data);else await eRef().add({...data,crt:Date.now()});ss('ok');vY=pdt(date).getFullYear();vM=pdt(date).getMonth();selD=date;sv('cal');renderCal();renderDP(date);closeModal();toast(editId?'Güncellendi ✓':'Kaydedildi ✓');}
-  catch(e){ss('err');toast('Hata: '+e.message);}
+  try{ss('saving');if(editId)await eRef().doc(editId).set(data);else await eRef().add({...data,crt:Date.now()});ss('ok');
+    // Navigate to that date but keep today selected on re-open
+    vY=pdt(date).getFullYear();vM=pdt(date).getMonth();selD=date;
+    renderCal();renderDP(date);cEmo();toast(editId?'Güncellendi ✓':'Kaydedildi ✓');
+  }catch(e){ss('err');toast('Hata: '+e.message);}
   finally{btn.disabled=false;btn.textContent='Kaydet';}
 }
 
@@ -669,7 +971,7 @@ async function handleSave(){
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
     navigator.serviceWorker.register('/Filist-/sw.js',{scope:'/Filist-/'})
-      .then(r=>r.addEventListener('updatefound',()=>toast('Güncelleme var')))
+      .then(r=>r.addEventListener('updatefound',()=>toast('Güncelleme var — sayfayı yenile')))
       .catch(e=>console.warn('SW:',e));
   });
 }
