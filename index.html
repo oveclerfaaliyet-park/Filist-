@@ -279,6 +279,34 @@ header{height:52px;display:flex;align-items:center;padding:0 14px;border-bottom:
 .img-action-desc{font-size:10px;color:var(--t3);letter-spacing:1px;margin-top:1px}
 .img-action-sep{height:1px;background:var(--b);margin:6px 0}
 .img-action-cancel{color:var(--red)}
+
+/* ── RECURRING ── */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--b);margin-top:4px}
+.toggle-lbl{font-size:9px;letter-spacing:3px;color:var(--t3);text-transform:uppercase}
+.toggle-sub{font-size:10px;color:var(--t2);margin-top:2px}
+.toggle-wrap{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle-wrap input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--b);border-radius:24px;cursor:pointer;transition:background .2s}
+.toggle-slider:before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:var(--t2);border-radius:50%;transition:all .2s}
+.toggle-wrap input:checked+.toggle-slider{background:var(--gold)}
+.toggle-wrap input:checked+.toggle-slider:before{transform:translateX(20px);background:#0a0a0a}
+.pb.recurring{background:rgba(201,168,76,.15);color:var(--gold)}
+.recurring-badge{font-size:9px;letter-spacing:1px;color:var(--gold);background:var(--gdim);padding:2px 7px;border-radius:10px}
+.cdot.recurring{background:var(--gold);width:5px;height:5px}
+
+/* ── ENTRY PREVIEW MODAL ── */
+#prev-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:650;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+#prev-overlay.open{display:flex}
+#prev-modal{background:var(--bg2);border:1px solid var(--b);border-radius:16px 16px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;padding:16px 14px 32px;animation:su .26s cubic-bezier(.4,0,.2,1)}
+.prev-img{width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin-bottom:14px;cursor:pointer;display:block}
+.prev-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;letter-spacing:1px;margin-bottom:8px;line-height:1.3}
+.prev-meta-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.prev-date{font-size:11px;color:var(--t2);letter-spacing:1px}
+.prev-time{font-size:11px;color:var(--t3);letter-spacing:1px}
+.prev-note{font-size:13px;color:var(--t2);line-height:1.8;padding:12px;background:var(--bg3);border-radius:8px;margin-bottom:16px;border:1px solid var(--b);white-space:pre-wrap}
+.prev-actions{display:flex;gap:9px}
+.prev-edit-btn{flex:1;background:var(--gold);color:#0a0a0a;border:none;border-radius:8px;padding:13px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500}
+.prev-close-btn{background:0;border:1px solid var(--b);color:var(--t2);border-radius:8px;padding:13px 16px;font-size:11px;letter-spacing:2px;cursor:pointer}
 /* FAB */
 #fab{position:fixed;right:14px;bottom:20px;width:48px;height:48px;border-radius:24px;background:var(--gold);color:#0a0a0a;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 18px rgba(201,168,76,.45);display:flex;align-items:center;justify-content:center;z-index:100;line-height:1}
 #fab:active{transform:scale(.9)}
@@ -459,6 +487,26 @@ header{height:52px;display:flex;align-items:center;padding:0 14px;border-bottom:
   </div>
 </div>
 
+<!-- ENTRY PREVIEW MODAL -->
+<div id="prev-overlay">
+  <div id="prev-modal">
+    <div class="mhandle"></div>
+    <img id="prev-img" class="prev-img" alt="" style="display:none" onclick="oLb(this.src)">
+    <div class="prev-title" id="prev-title"></div>
+    <div class="prev-meta-row">
+      <span class="pb" id="prev-pb"></span>
+      <span class="prev-date" id="prev-date"></span>
+      <span class="prev-time" id="prev-time"></span>
+      <span class="recurring-badge" id="prev-recur" style="display:none">🔄 Yıllık</span>
+    </div>
+    <div class="prev-note" id="prev-note" style="display:none"></div>
+    <div class="prev-actions">
+      <button class="prev-close-btn" onclick="closePrev()">Kapat</button>
+      <button class="prev-edit-btn" id="prev-edit-btn">✏️ Düzenle</button>
+    </div>
+  </div>
+</div>
+
 <!-- ENTRY MODAL -->
 <div class="mo" id="emo">
   <div class="mbox">
@@ -476,6 +524,16 @@ header{height:52px;display:flex;align-items:center;padding:0 14px;border-bottom:
         <button class="pbtn on" data-p="medium" type="button">Orta</button>
         <button class="pbtn" data-p="low" type="button">Düşük</button>
       </div>
+    </div>
+    <div class="toggle-row">
+      <div>
+        <div class="toggle-lbl">Yıllık Tekrar</div>
+        <div class="toggle-sub">Doğum günü, yıldönümü vb.</div>
+      </div>
+      <label class="toggle-wrap">
+        <input type="checkbox" id="f-recurring">
+        <span class="toggle-slider"></span>
+      </label>
     </div>
     <div class="fg"><label class="fl">Resim (isteğe bağlı)</label>
       <div class="izone"><input type="file" id="fimg" accept="image/*">
@@ -835,7 +893,15 @@ function renderCal(){
     if(ds===selD)el.classList.add('sel');
     const dn=document.createElement('div');dn.className='dn';dn.textContent=c.d;el.appendChild(dn);
     const de=all[ds]||[];
-    if(de.length){const dv=document.createElement('div');dv.className='cdots';de.slice(0,3).forEach(e=>{const dot=document.createElement('div');dot.className='cdot '+(e.p||'medium');dv.appendChild(dot)});el.appendChild(dv);}
+    // Also find recurring entries matching this MM-DD
+    const mmdd=p2(rm+1)+'-'+p2(c.d);
+    const recur=Object.values(all).flat().filter(e=>e.recurring&&e.date&&e.date.slice(5)===mmdd&&e.date.slice(0,4)!==String(ry));
+    const allDots=[...de,...recur];
+    if(allDots.length){
+      const dv=document.createElement('div');dv.className='cdots';
+      allDots.slice(0,3).forEach(e=>{const dot=document.createElement('div');dot.className='cdot '+(e.recurring&&!de.includes(e)?'recurring':e.p||'medium');dv.appendChild(dot)});
+      el.appendChild(dv);
+    }
     el.onclick=()=>{selD=ds;renderCal();renderDP(ds)};
     g.appendChild(el);
   });
@@ -847,8 +913,28 @@ function renderDP(ds){
   const de=all[ds]||[];
   const cnt=$('dpcnt');
   if(de.length){cnt.textContent=de.length+' kayıt';cnt.style.display='inline';}else cnt.style.display='none';
+  // Find recurring entries for this MM-DD (from other years)
+  const mmdd2=ds.slice(5);
+  const recurEntries=Object.values(all).flat().filter(e=>e.recurring&&e.date&&e.date.slice(5)===mmdd2&&e.date!==ds);
   const el=$('elist');el.innerHTML='';
-  if(!de.length){el.innerHTML='<div class="empty-s"><div class="ei">📋</div><div class="et">Kayıt yok · + ile ekle</div></div>';return;}
+  if(!de.length&&!recurEntries.length){el.innerHTML='<div class="empty-s"><div class="ei">📋</div><div class="et">Kayıt yok · + ile ekle</div></div>';return;}
+  // Show recurring entries first with special badge
+  recurEntries.forEach(e=>{
+    const yr=pdt(ds).getFullYear();
+    const origYr=parseInt(e.date.slice(0,4));
+    const diff=yr-origYr;
+    const diffLbl=diff===1?'1. yıl':diff+'. yıl';
+    const card=mkCard(e,false);
+    // Add recurring badge
+    const meta=card.querySelector('.emeta');
+    if(meta){
+      const badge=document.createElement('span');
+      badge.className='recurring-badge';
+      badge.textContent='🔄 '+diffLbl;
+      meta.appendChild(badge);
+    }
+    el.appendChild(card);
+  });
   de.forEach(e=>el.appendChild(mkCard(e,false)));
 }
 
@@ -859,8 +945,8 @@ function mkCard(e,showDate){
     +(e.note?`<div class="enote">${esc(e.note)}</div>`:'')
     +`<div class="emeta">${showDate?`<span class="edlbl">${e.date}</span>`:''}`
     +(e.time?`<span class="etime">${esc(e.time)}</span>`:'')
-    +`<span class="pb ${e.p||'medium'}">${plb(e.p)}</span></div></div>`;
-  c.onclick=()=>openEdit(e,e.date);
+    +`<span class="pb ${e.p||'medium'}">${plb(e.p)}</span>${e.recurring?'<span class="recurring-badge">🔄 Yıllık</span>':''}</div></div>`;
+  c.onclick=()=>openPrev(e,e.date);
   return c;
 }
 
@@ -1176,9 +1262,42 @@ $('emo').onclick=e=>{if(e.target===$('emo'))cEmo()};
 document.querySelectorAll('.pbtn').forEach(b=>{b.onclick=()=>{selP=b.dataset.p;document.querySelectorAll('.pbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on')}});
 $('fimg').onchange=e=>{const f=e.target.files[0];if(!f)return;imgF=f;const r=new FileReader();r.onload=ev=>{$('ipr').src=ev.target.result;$('ipr').style.display='block';$('irm').style.display='flex';$('iztxt').style.display='none'};r.readAsDataURL(f)};
 $('irm').onclick=e=>{e.stopPropagation();imgF=null;exImg=null;$('ipr').style.display='none';$('irm').style.display='none';$('iztxt').style.display='block';$('fimg').value=''};
-function rM(){imgF=null;exImg=null;$('ftit').value='';$('fnot').value='';$('fdat').value=selD||fmt(NOW);const n=new Date();$('ftim').value=p2(n.getHours())+':'+p2(n.getMinutes());selP='medium';document.querySelectorAll('.pbtn').forEach(b=>b.classList.toggle('on',b.dataset.p==='medium'));$('ipr').style.display='none';$('irm').style.display='none';$('iztxt').style.display='block';$('fimg').value='';$('ild').style.display='none'}
+function rM(){imgF=null;exImg=null;$('ftit').value='';$('fnot').value='';$('f-recurring').checked=false;$('fdat').value=selD||fmt(NOW);const n=new Date();$('ftim').value=p2(n.getHours())+':'+p2(n.getMinutes());selP='medium';document.querySelectorAll('.pbtn').forEach(b=>b.classList.toggle('on',b.dataset.p==='medium'));$('ipr').style.display='none';$('irm').style.display='none';$('iztxt').style.display='block';$('fimg').value='';$('ild').style.display='none'}
+// ── ENTRY PREVIEW ────────────────────────────────────
+let prevEntry=null;
+
+function openPrev(e,ds){
+  prevEntry=e;
+  // Image
+  const img=$('prev-img');
+  if(e.img){img.src=e.img;img.style.display='block';}
+  else img.style.display='none';
+  // Title
+  $('prev-title').textContent=e.title||'Başlıksız';
+  // Priority badge
+  const pb=$('prev-pb');
+  pb.className='pb '+(e.p||'medium');
+  pb.textContent=plb(e.p);
+  // Date
+  const d=pdt(e.date||ds),di=(d.getDay()+6)%7;
+  $('prev-date').textContent=TRD[di]+', '+d.getDate()+' '+TRM[d.getMonth()]+' '+d.getFullYear();
+  // Time
+  $('prev-time').textContent=e.time||'';
+  // Recurring
+  $('prev-recur').style.display=e.recurring?'inline':'none';
+  // Note
+  const noteEl=$('prev-note');
+  if(e.note){noteEl.textContent=e.note;noteEl.style.display='block';}
+  else noteEl.style.display='none';
+  // Edit button
+  $('prev-edit-btn').onclick=()=>{closePrev();openEdit(e,e.date||ds)};
+  $('prev-overlay').classList.add('open');
+}
+function closePrev(){$('prev-overlay').classList.remove('open')}
+$('prev-overlay').onclick=e=>{if(e.target===$('prev-overlay'))closePrev()};
+
 function openAdd(){editId=null;rM();$('mtitle').textContent='Yeni Kayıt';$('bdel').style.display='none';$('emo').classList.add('open');setTimeout(()=>$('ftit').focus(),280)}
-function openEdit(e,ds){editId=e.id;exImg=e.img||null;imgF=null;$('mtitle').textContent='Kaydı Düzenle';$('ftit').value=e.title||'';$('fnot').value=e.note||'';$('fdat').value=e.date||ds;$('ftim').value=e.time||'';selP=e.p||'medium';document.querySelectorAll('.pbtn').forEach(b=>b.classList.toggle('on',b.dataset.p===selP));if(e.img){$('ipr').src=e.img;$('ipr').style.display='block';$('irm').style.display='flex';$('iztxt').style.display='none';}else{$('ipr').style.display='none';$('irm').style.display='none';$('iztxt').style.display='block';}$('fimg').value='';$('ild').style.display='none';$('bdel').style.display='inline-block';$('emo').classList.add('open')}
+function openEdit(e,ds){editId=e.id;exImg=e.img||null;imgF=null;$('mtitle').textContent='Kaydı Düzenle';$('ftit').value=e.title||'';$('fnot').value=e.note||'';$('fdat').value=e.date||ds;$('ftim').value=e.time||'';selP=e.p||'medium';document.querySelectorAll('.pbtn').forEach(b=>b.classList.toggle('on',b.dataset.p===selP));$('f-recurring').checked=!!(e.recurring);if(e.img){$('ipr').src=e.img;$('ipr').style.display='block';$('irm').style.display='flex';$('iztxt').style.display='none';}else{$('ipr').style.display='none';$('irm').style.display='none';$('iztxt').style.display='block';}$('fimg').value='';$('ild').style.display='none';$('bdel').style.display='inline-block';$('emo').classList.add('open')}
 function cEmo(){$('emo').classList.remove('open');editId=null}
 async function handleDel(){if(!editId||!confirm('Silinsin mi?'))return;try{ss('saving');await eRef().doc(editId).delete();ss('ok');toast('Silindi');cEmo();}catch{ss('err');toast('Hata')}}
 async function handleSave(){
@@ -1188,7 +1307,7 @@ async function handleSave(){
   if(imgF){$('ild').style.display='block';ss('saving');try{const res=await uploadCloudinary(imgF);iu=res.url;}catch{toast('Resim yüklenemedi');iu=null;}$('ild').style.display='none';}
   if(!imgF&&!exImg)iu=null;
   const date=$('fdat').value||fmt(NOW);
-  const data={title:tit,note:$('fnot').value.trim(),date,time:$('ftim').value,p:selP,img:iu||null,upd:Date.now()};
+  const data={title:tit,note:$('fnot').value.trim(),date,time:$('ftim').value,p:selP,img:iu||null,recurring:$('f-recurring').checked||false,upd:Date.now()};
   try{ss('saving');if(editId)await eRef().doc(editId).set(data);else await eRef().add({...data,crt:Date.now()});ss('ok');
     // Navigate to that date but keep today selected on re-open
     vY=pdt(date).getFullYear();vM=pdt(date).getMonth();selD=date;
